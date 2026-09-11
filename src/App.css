@@ -464,6 +464,48 @@
   border-color: #75968a;
   box-shadow: 0 0 0 3px #e5eee9;
 }
+.survey-filter-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 4px;
+}
+.survey-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 45px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  padding: 10px 13px;
+  font:
+    600 11px "DM Mono",
+    monospace;
+  text-align: left;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+.survey-filter strong {
+  color: inherit;
+  font-size: 12px;
+}
+.survey-filter:hover,
+.survey-filter:focus-visible {
+  border-color: #75968a;
+  color: var(--ink);
+}
+.survey-filter.active {
+  border-color: var(--dark);
+  background: var(--dark);
+  color: #fff;
+}
+.survey-filter.active strong {
+  color: var(--coral);
+}
 .table-search-clear {
   position: absolute;
   right: 5px;
@@ -909,6 +951,46 @@ td {
   flex-shrink: 0;
   margin: 0;
   padding: 8px 12px;
+}
+.answer-loading,
+.answer-error {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.answer-error {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 12px 0;
+  color: #8f4c3e;
+}
+.answer-error .outline-button {
+  margin: 0;
+  padding: 8px 12px;
+}
+.loading-spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--line);
+  border-top-color: var(--dark);
+  border-radius: 50%;
+  animation: survey-spinner 700ms linear infinite;
+}
+@keyframes survey-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .survey-filter {
+    transition: none;
+  }
+  .loading-spinner {
+    animation: none;
+  }
 }
 .answer-list {
   display: grid;
@@ -1467,6 +1549,9 @@ td {
   }
   .section-actions {
     gap: 8px;
+  }
+  .survey-filter-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .section-actions button {
     min-height: 44px;

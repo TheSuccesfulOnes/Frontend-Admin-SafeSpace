@@ -9,7 +9,6 @@ import type {
   ReportStatus,
   Role,
   SurveyAnswer,
-  SurveyStatus,
   User,
 } from "../types/domain";
 import { API_URL, parseApiResponse } from "./api";
@@ -224,19 +223,15 @@ export async function updateSurvey(
   return mapSurvey(await parseApiResponse<ApiSurvey>(response));
 }
 
+export type SurveyTransition = "publish" | "close" | "reopen";
+
 export async function changeSurveyStatus(
   token: string,
   id: number,
-  status: SurveyStatus,
+  transition: SurveyTransition,
 ): Promise<AdminSurvey> {
-  const action =
-    status === "PUBLISHED"
-      ? "publish"
-      : status === "CLOSED"
-        ? "close"
-        : "reopen";
   const response = await fetch(
-    `${API_URL}/api/v1/admin/surveys/${id}/${action}`,
+    `${API_URL}/api/v1/admin/surveys/${id}/${transition}`,
     {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { PageContent } from "../components/layout/PageContent";
@@ -10,16 +10,13 @@ import {
   deleteSurvey,
   getAdminSurveys,
   getSurveyAnswers,
+  type SurveyTransition,
   updateSurvey,
 } from "../services/adminService";
-import type {
-  AdminSurvey,
-  SurveyAnswer,
-  SurveyStatus,
-  SurveyType,
-} from "../types/domain";
+import type { AdminSurvey, SurveyAnswer, SurveyType } from "../types/domain";
 
 type SurveysPageProps = { token: string };
+type SurveyFilter = "ALL" | "DRAFT" | "PUBLISHED" | "CLOSED";
 type SurveyForm = {
   title: string;
   question: string;
@@ -38,13 +35,9 @@ type PendingAction =
   | { type: "create"; form: SurveyForm }
   | { type: "edit"; survey: AdminSurvey; form: SurveyForm }
   | { type: "delete"; survey: AdminSurvey }
-  | {
-      type: "publish" | "close" | "reopen";
-      survey: AdminSurvey;
-      status: SurveyStatus;
-    };
+  | { type: SurveyTransition; survey: AdminSurvey };
 
-function statusTranslation(status: SurveyStatus) {
+function statusTranslation(status: AdminSurvey["status"]) {
   return status === "DRAFT"
     ? "draft"
     : status === "PUBLISHED"
@@ -52,13 +45,26 @@ function statusTranslation(status: SurveyStatus) {
       : "closed";
 }
 
+function filterTranslation(filter: SurveyFilter) {
+  return filter === "ALL"
+    ? "allStatuses"
+    : filter === "DRAFT"
+      ? "draft"
+      : filter === "PUBLISHED"
+        ? "published"
+        : "closed";
+}
+
 export function SurveysPage({ token }: SurveysPageProps) {
   const { t } = useLanguage();
   const [surveys, setSurveys] = useState<AdminSurvey[]>([]);
   const [answers, setAnswers] = useState<SurveyAnswer[]>([]);
+  const [answersLoading, setAnswersLoading] = useState(false);
+  const [answersError, setAnswersError] = useState("");
   const [selectedSurvey, setSelectedSurvey] = useState<AdminSurvey | null>(
     null,
   );
+  const [surveyFilter, setSurveyFilter] = useState<SurveyFilter>("ALL");
   const [form, setForm] = useState<SurveyForm>(emptyForm);
   const [editingSurvey, setEditingSurvey] = useState<AdminSurvey | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -72,13 +78,21 @@ export function SurveysPage({ token }: SurveysPageProps) {
 
   useAutoDismiss(message, setMessage);
 
+  const visibleSurveys = useMemo(
+    () =>
+      surveyFilter === "ALL"
+        ? surveys
+        : surveys.filter((survey) => survey.status === surveyFilter),
+    [surveyFilter, surveys],
+  );
+
   const loadSurveys = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
       setSurveys(await getAdminSurveys(token));
     } catch {
-      setError(t("surveyActionFailed"));
+      setError(t("surveysFailed"));
     } finally {
       setLoading(false);
     }
@@ -132,16 +146,16 @@ export function SurveysPage({ token }: SurveysPageProps) {
     setPendingAction({ type: "create", form: { ...form } });
   }
 
-  function updateStatus(survey: AdminSurvey, status: SurveyStatus) {
+  function updateStatus(survey: AdminSurvey) {
     setMessage("");
     setError("");
-    const type =
+    const transition: SurveyTransition =
       survey.status === "DRAFT"
         ? "publish"
         : survey.status === "PUBLISHED"
           ? "close"
           : "reopen";
-    setPendingAction({ type, survey, status });
+    setPendingAction({ type: transition, survey });
   }
 
   function remove(survey: AdminSurvey) {
@@ -172,9 +186,10 @@ export function SurveysPage({ token }: SurveysPageProps) {
         if (selectedSurvey?.id === action.survey.id) {
           setSelectedSurvey(null);
           setAnswers([]);
+          setAnswersError("");
         }
       } else {
-        await changeSurveyStatus(token, action.survey.id, action.status);
+        await changeSurveyStatus(token, action.survey.id, action.type);
         setMessage(t("surveyUpdated"));
       }
       await loadSurveys();
@@ -190,11 +205,14 @@ export function SurveysPage({ token }: SurveysPageProps) {
   async function showAnswers(survey: AdminSurvey) {
     setSelectedSurvey(survey);
     setAnswers([]);
-    setError("");
+    setAnswersError("");
+    setAnswersLoading(true);
     try {
       setAnswers(await getSurveyAnswers(token, survey.id));
     } catch {
-      setError(t("surveyActionFailed"));
+      setAnswersError(t("answersFailed"));
+    } finally {
+      setAnswersLoading(false);
     }
   }
 
@@ -202,19 +220,26 @@ export function SurveysPage({ token }: SurveysPageProps) {
     <PageContent>
       <div className="section-title">
         <div>
-          <span className="eyebrow">{t("accessManagement")}</span>
+          <span className="eyebrow">{t("contentManagement")}</span>
           <h2>{t("surveys")}</h2>
-          <p className="muted">{t("manageRoleAccounts")}</p>
+          <p className="muted">{t("surveysIntro")}</p>
         </div>
         <div className="section-actions">
           <button
             type="button"
             className="outline-button"
             onClick={() => void loadSurveys()}
+            disabled={loading}
+            aria-busy={loading}
           >
             ↻ {t("refresh")}
           </button>
-          <button type="button" className="dark-button" onClick={openCreate}>
+          <button
+            type="button"
+            className="dark-button"
+            onClick={openCreate}
+            disabled={saving}
+          >
             ＋ {t("createSurvey")}
           </button>
         </div>
@@ -232,9 +257,7 @@ export function SurveysPage({ token }: SurveysPageProps) {
             </button>
             <div className="panel-heading">
               <div>
-                <span className="eyebrow">
-                  {editingSurvey ? t("editAccount") : t("newAccount")}
-                </span>
+                <span className="eyebrow">{t("surveyEditor")}</span>
                 <h3>{editingSurvey ? t("editSurvey") : t("createSurvey")}</h3>
               </div>
             </div>
@@ -243,7 +266,7 @@ export function SurveysPage({ token }: SurveysPageProps) {
               onSubmit={submit}
             >
               <label>
-                {t("reportTitle")}
+                {t("surveyTitle")}
                 <input
                   required
                   maxLength={160}
@@ -295,7 +318,7 @@ export function SurveysPage({ token }: SurveysPageProps) {
                 disabled={saving}
               >
                 {saving
-                  ? t("creating")
+                  ? t("saving")
                   : editingSurvey
                     ? t("updateAccount")
                     : t("createSurvey")}
@@ -304,9 +327,9 @@ export function SurveysPage({ token }: SurveysPageProps) {
             </form>
           </div>
           <div className="note-block">
-            <span className="eyebrow">{t("securityNote")}</span>
-            <h3>{t("surveys")}</h3>
-            <p>{t("manageRoleAccounts")}</p>
+            <span className="eyebrow">{t("surveyEditor")}</span>
+            <h3>{t("surveyLifecycle")}</h3>
+            <p>{t("surveysIntro")}</p>
           </div>
         </div>
       )}
@@ -322,18 +345,50 @@ export function SurveysPage({ token }: SurveysPageProps) {
         </div>
       )}
 
+      <div
+        className="survey-filter-row"
+        role="tablist"
+        aria-label={t("filterSurveys")}
+      >
+        {(["ALL", "DRAFT", "PUBLISHED", "CLOSED"] as SurveyFilter[]).map(
+          (filter) => {
+            const count =
+              filter === "ALL"
+                ? surveys.length
+                : surveys.filter((survey) => survey.status === filter).length;
+            return (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={surveyFilter === filter}
+                className={`survey-filter ${surveyFilter === filter ? "active" : ""}`}
+                key={filter}
+                onClick={() => setSurveyFilter(filter)}
+              >
+                <span>{t(filterTranslation(filter))}</span>
+                <strong>{count}</strong>
+              </button>
+            );
+          },
+        )}
+      </div>
+
       <div className="panel table-panel">
         <div className="table-toolbar">
-          <strong>
-            {surveys.length} {t("surveys")}
-          </strong>
-          <span>{t("sortedByCreation")}</span>
+          <div className="table-toolbar-info">
+            <strong>
+              {visibleSurveys.length} {t("surveys")}
+            </strong>
+            <span>
+              {t(filterTranslation(surveyFilter))} · {t("sortedByCreation")}
+            </span>
+          </div>
         </div>
         <div className="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>{t("reportTitle")}</th>
+                <th>{t("surveyTitle")}</th>
                 <th>{t("surveyType")}</th>
                 <th>{t("status")}</th>
                 <th>{t("answerCount")}</th>
@@ -347,16 +402,16 @@ export function SurveysPage({ token }: SurveysPageProps) {
                     {t("signingIn")}
                   </td>
                 </tr>
-              ) : surveys.length === 0 ? (
+              ) : visibleSurveys.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="empty-state">
-                    {t("emptyUsers")}
+                    {t("noSurveysInStatus")}
                   </td>
                 </tr>
               ) : (
-                surveys.map((survey) => (
+                visibleSurveys.map((survey) => (
                   <tr key={survey.id}>
-                    <td data-label={t("reportTitle")}>
+                    <td data-label={t("surveyTitle")}>
                       <strong>{survey.title}</strong>
                       <span className="table-secondary">{survey.question}</span>
                     </td>
@@ -386,6 +441,7 @@ export function SurveysPage({ token }: SurveysPageProps) {
                         <button
                           type="button"
                           className="table-action table-action-view"
+                          disabled={saving || answersLoading}
                           onClick={() => void showAnswers(survey)}
                         >
                           {t("viewAnswers")}
@@ -395,9 +451,7 @@ export function SurveysPage({ token }: SurveysPageProps) {
                             type="button"
                             className="table-action table-action-status"
                             disabled={saving}
-                            onClick={() =>
-                              void updateStatus(survey, "PUBLISHED")
-                            }
+                            onClick={() => void updateStatus(survey)}
                           >
                             {t("publish")}
                           </button>
@@ -407,7 +461,7 @@ export function SurveysPage({ token }: SurveysPageProps) {
                             type="button"
                             className="table-action table-action-status"
                             disabled={saving}
-                            onClick={() => void updateStatus(survey, "CLOSED")}
+                            onClick={() => void updateStatus(survey)}
                           >
                             {t("close")}
                           </button>
@@ -417,9 +471,7 @@ export function SurveysPage({ token }: SurveysPageProps) {
                             type="button"
                             className="table-action table-action-status"
                             disabled={saving}
-                            onClick={() =>
-                              void updateStatus(survey, "PUBLISHED")
-                            }
+                            onClick={() => void updateStatus(survey)}
                           >
                             {t("reopen")}
                           </button>
@@ -452,13 +504,33 @@ export function SurveysPage({ token }: SurveysPageProps) {
             <button
               type="button"
               className="outline-button answer-panel-close"
-              onClick={() => setSelectedSurvey(null)}
+              onClick={() => {
+                setSelectedSurvey(null);
+                setAnswers([]);
+                setAnswersError("");
+              }}
               aria-label={t("closeAnswers")}
             >
               {t("closeAnswers")}
             </button>
           </div>
-          {answers.length === 0 ? (
+          {answersLoading ? (
+            <div className="answer-loading" role="status" aria-live="polite">
+              <span className="loading-spinner" aria-hidden="true" />
+              {t("answersLoading")}
+            </div>
+          ) : answersError ? (
+            <div className="answer-error" role="alert">
+              <span>{answersError}</span>
+              <button
+                type="button"
+                className="outline-button"
+                onClick={() => void showAnswers(selectedSurvey)}
+              >
+                {t("retry")}
+              </button>
+            </div>
+          ) : answers.length === 0 ? (
             <p className="muted">{t("noAnswers")}</p>
           ) : (
             <div className="answer-list">
