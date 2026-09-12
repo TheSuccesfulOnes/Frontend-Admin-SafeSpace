@@ -42,16 +42,6 @@ export type AdminSurvey = {
   createdAt: string;
 };
 
-export type SurveyAnswer = {
-  id: number;
-  surveyId: number;
-  username: string;
-  email: string;
-  displayName: string;
-  answerText: string;
-  createdAt: string;
-};
-
 export type SurveyComment = {
   id: number;
   content: string;

@@ -8,7 +8,6 @@ import type {
   Report,
   ReportStatus,
   Role,
-  SurveyAnswer,
   SurveyComment,
   User,
 } from "../types/domain";
@@ -140,32 +139,12 @@ type ApiSurvey = Omit<
   created_at: string;
 };
 
-type ApiSurveyAnswer = Omit<
-  SurveyAnswer,
-  "surveyId" | "displayName" | "answerText" | "createdAt"
-> & {
-  survey_id: number;
-  display_name: string;
-  answer_text: string;
-  created_at: string;
-};
-
 function mapSurvey(survey: ApiSurvey): AdminSurvey {
   return {
     ...survey,
     allowComments: survey.allow_comments,
     createdBy: survey.created_by,
     createdAt: survey.created_at,
-  };
-}
-
-function mapSurveyAnswer(answer: ApiSurveyAnswer): SurveyAnswer {
-  return {
-    ...answer,
-    surveyId: answer.survey_id,
-    displayName: answer.display_name,
-    answerText: answer.answer_text,
-    createdAt: answer.created_at,
   };
 }
 
@@ -265,20 +244,6 @@ export async function deleteSurvey(token: string, id: number): Promise<void> {
     headers: { Authorization: `Bearer ${token}` },
   });
   await parseApiResponse<unknown>(response);
-}
-
-export async function getSurveyAnswers(
-  token: string,
-  id: number,
-): Promise<SurveyAnswer[]> {
-  const response = await fetch(
-    `${API_URL}/api/v1/admin/surveys/${id}/answers`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    },
-  );
-  const data = await parseApiResponse<ApiSurveyAnswer[]>(response);
-  return data.map(mapSurveyAnswer);
 }
 
 export async function getSurveyComments(

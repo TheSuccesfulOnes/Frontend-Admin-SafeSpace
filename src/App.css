@@ -947,47 +947,30 @@ td {
     animation: none;
   }
 }
-.answer-list {
-  display: grid;
-  gap: 0;
-  margin-top: 20px;
-}
-.answer-item {
-  padding: 16px 0;
-  border-top: 1px solid #edf0eb;
-}
-.answer-item p {
-  margin: 8px 0 0;
-  color: #52615b;
-  font-size: 12px;
-  line-height: 1.65;
-  white-space: normal;
-}
-.answer-section + .answer-section {
-  margin-top: 27px;
-  padding-top: 25px;
-  border-top: 1px solid var(--line);
-}
-.answer-section-heading {
+.answer-panel-summary {
   display: flex;
-  align-items: flex-start;
+  align-items: baseline;
   justify-content: space-between;
   gap: 16px;
+  margin-top: 18px;
+  padding: 15px 0 17px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
 }
-.answer-section-heading > div {
-  display: grid;
-  gap: 6px;
-}
-.answer-section-heading strong {
+.answer-panel-summary p {
+  max-width: 720px;
+  margin: 0;
   color: var(--ink);
   font-size: 13px;
+  line-height: 1.55;
 }
-.answer-section-note {
+.answer-panel-summary span {
   color: var(--muted);
   font:
     10px "DM Mono",
     monospace;
   text-align: right;
+  white-space: nowrap;
 }
 .survey-comment-list {
   display: grid;
@@ -1592,6 +1575,19 @@ td {
   }
   .section-actions button {
     min-height: 44px;
+  }
+  .answer-panel-summary {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .answer-panel-summary span {
+    text-align: left;
+    white-space: normal;
+  }
+  .survey-comment-replies {
+    margin-left: 8px;
+    padding-left: 10px;
   }
   .metric-grid {
     gap: 8px;

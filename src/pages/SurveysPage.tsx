@@ -9,17 +9,11 @@ import {
   createSurvey,
   deleteSurvey,
   getAdminSurveys,
-  getSurveyAnswers,
   getSurveyComments,
   type SurveyTransition,
   updateSurvey,
 } from "../services/adminService";
-import type {
-  AdminSurvey,
-  SurveyAnswer,
-  SurveyComment,
-  SurveyType,
-} from "../types/domain";
+import type { AdminSurvey, SurveyComment, SurveyType } from "../types/domain";
 
 type SurveysPageProps = { token: string };
 type SurveyForm = {
@@ -53,10 +47,7 @@ function statusTranslation(status: AdminSurvey["status"]) {
 export function SurveysPage({ token }: SurveysPageProps) {
   const { t } = useLanguage();
   const [surveys, setSurveys] = useState<AdminSurvey[]>([]);
-  const [answers, setAnswers] = useState<SurveyAnswer[]>([]);
   const [comments, setComments] = useState<SurveyComment[]>([]);
-  const [answersLoading, setAnswersLoading] = useState(false);
-  const [answersError, setAnswersError] = useState("");
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [commentsError, setCommentsError] = useState("");
   const [selectedSurvey, setSelectedSurvey] = useState<AdminSurvey | null>(
@@ -174,9 +165,7 @@ export function SurveysPage({ token }: SurveysPageProps) {
         setMessage(t("surveyDeleted"));
         if (selectedSurvey?.id === action.survey.id) {
           setSelectedSurvey(null);
-          setAnswers([]);
           setComments([]);
-          setAnswersError("");
           setCommentsError("");
         }
       } else {
@@ -193,32 +182,18 @@ export function SurveysPage({ token }: SurveysPageProps) {
     }
   }
 
-  async function showAnswers(survey: AdminSurvey) {
+  async function showSurveyComments(survey: AdminSurvey) {
     setSelectedSurvey(survey);
-    setAnswers([]);
     setComments([]);
-    setAnswersError("");
     setCommentsError("");
-    setAnswersLoading(true);
     setCommentsLoading(true);
-
-    const [answersResult, commentsResult] = await Promise.allSettled([
-      getSurveyAnswers(token, survey.id),
-      getSurveyComments(token, survey.id),
-    ]);
-
-    if (answersResult.status === "fulfilled") {
-      setAnswers(answersResult.value);
-    } else {
-      setAnswersError(t("answersFailed"));
-    }
-    if (commentsResult.status === "fulfilled") {
-      setComments(commentsResult.value);
-    } else {
+    try {
+      setComments(await getSurveyComments(token, survey.id));
+    } catch {
       setCommentsError(t("commentsFailed"));
+    } finally {
+      setCommentsLoading(false);
     }
-    setAnswersLoading(false);
-    setCommentsLoading(false);
   }
 
   return (
@@ -416,8 +391,8 @@ export function SurveysPage({ token }: SurveysPageProps) {
                         <button
                           type="button"
                           className="table-action table-action-view"
-                          disabled={saving || answersLoading || commentsLoading}
-                          onClick={() => void showAnswers(survey)}
+                          disabled={saving || commentsLoading}
+                          onClick={() => void showSurveyComments(survey)}
                         >
                           {t("viewAnswers")}
                         </button>
@@ -473,7 +448,7 @@ export function SurveysPage({ token }: SurveysPageProps) {
         <div className="panel answer-panel">
           <div className="panel-heading">
             <div>
-              <span className="eyebrow">{t("surveyAnswers")}</span>
+              <span className="eyebrow">{t("surveyComments")}</span>
               <h3>{selectedSurvey.title}</h3>
             </div>
             <button
@@ -481,9 +456,7 @@ export function SurveysPage({ token }: SurveysPageProps) {
               className="outline-button answer-panel-close"
               onClick={() => {
                 setSelectedSurvey(null);
-                setAnswers([]);
                 setComments([]);
-                setAnswersError("");
                 setCommentsError("");
               }}
               aria-label={t("closeAnswers")}
@@ -491,18 +464,38 @@ export function SurveysPage({ token }: SurveysPageProps) {
               {t("closeAnswers")}
             </button>
           </div>
-          <SurveyAnswerList
-            answers={answers}
-            error={answersError}
-            loading={answersLoading}
-            onRetry={() => void showAnswers(selectedSurvey)}
-          />
-          <SurveyCommentList
-            comments={comments}
-            error={commentsError}
-            loading={commentsLoading}
-            onRetry={() => void showAnswers(selectedSurvey)}
-          />
+          <div className="answer-panel-summary">
+            <p>{selectedSurvey.question}</p>
+            <span>
+              {comments.length} {t("commentsCount")} · {countReplies(comments)}{" "}
+              {t("replies")}
+            </span>
+          </div>
+          {commentsLoading ? (
+            <div className="answer-loading" role="status" aria-live="polite">
+              <span className="loading-spinner" aria-hidden="true" />
+              {t("commentsLoading")}
+            </div>
+          ) : commentsError ? (
+            <div className="answer-error" role="alert">
+              <span>{commentsError}</span>
+              <button
+                type="button"
+                className="outline-button"
+                onClick={() => void showSurveyComments(selectedSurvey)}
+              >
+                {t("retry")}
+              </button>
+            </div>
+          ) : comments.length === 0 ? (
+            <p className="muted">{t("noComments")}</p>
+          ) : (
+            <div className="survey-comment-list">
+              {comments.map((comment) => (
+                <SurveyCommentItem key={comment.id} comment={comment} />
+              ))}
+            </div>
+          )}
         </div>
       )}
       {pendingAction && (
@@ -542,109 +535,11 @@ export function SurveysPage({ token }: SurveysPageProps) {
   );
 }
 
-function SurveyAnswerList({
-  answers,
-  error,
-  loading,
-  onRetry,
-}: {
-  answers: SurveyAnswer[];
-  error: string;
-  loading: boolean;
-  onRetry: () => void;
-}) {
-  const { t } = useLanguage();
-
-  return (
-    <section className="answer-section" aria-labelledby="survey-answer-list">
-      <div className="answer-section-heading">
-        <div>
-          <span className="eyebrow">{t("surveyAnswers")}</span>
-          <strong id="survey-answer-list">
-            {answers.length} {t("answerCount").toLowerCase()}
-          </strong>
-        </div>
-      </div>
-      {loading ? (
-        <div className="answer-loading" role="status" aria-live="polite">
-          <span className="loading-spinner" aria-hidden="true" />
-          {t("answersLoading")}
-        </div>
-      ) : error ? (
-        <div className="answer-error" role="alert">
-          <span>{error}</span>
-          <button type="button" className="outline-button" onClick={onRetry}>
-            {t("retry")}
-          </button>
-        </div>
-      ) : answers.length === 0 ? (
-        <p className="muted">{t("noAnswers")}</p>
-      ) : (
-        <div className="answer-list">
-          {answers.map((answer) => (
-            <article className="answer-item" key={answer.id}>
-              <div>
-                <strong>{answer.displayName || t("anonymous")}</strong>
-                <span className="table-secondary">{answer.email}</span>
-              </div>
-              <p>{answer.answerText}</p>
-            </article>
-          ))}
-        </div>
-      )}
-    </section>
-  );
-}
-
-function SurveyCommentList({
-  comments,
-  error,
-  loading,
-  onRetry,
-}: {
-  comments: SurveyComment[];
-  error: string;
-  loading: boolean;
-  onRetry: () => void;
-}) {
-  const { t } = useLanguage();
-
-  return (
-    <section
-      className="answer-section survey-comments-section"
-      aria-labelledby="survey-comment-list"
-    >
-      <div className="answer-section-heading">
-        <div>
-          <span className="eyebrow">{t("surveyComments")}</span>
-          <strong id="survey-comment-list">
-            {comments.length} {t("commentsCount")}
-          </strong>
-        </div>
-        <span className="answer-section-note">{t("anonymousOnly")}</span>
-      </div>
-      {loading ? (
-        <div className="answer-loading" role="status" aria-live="polite">
-          <span className="loading-spinner" aria-hidden="true" />
-          {t("commentsLoading")}
-        </div>
-      ) : error ? (
-        <div className="answer-error" role="alert">
-          <span>{error}</span>
-          <button type="button" className="outline-button" onClick={onRetry}>
-            {t("retry")}
-          </button>
-        </div>
-      ) : comments.length === 0 ? (
-        <p className="muted">{t("noComments")}</p>
-      ) : (
-        <div className="survey-comment-list">
-          {comments.map((comment) => (
-            <SurveyCommentItem key={comment.id} comment={comment} />
-          ))}
-        </div>
-      )}
-    </section>
+function countReplies(comments: SurveyComment[]): number {
+  return comments.reduce(
+    (total, comment) =>
+      total + comment.replies.length + countReplies(comment.replies),
+    0,
   );
 }
 
