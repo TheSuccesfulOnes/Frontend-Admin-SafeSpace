@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { PageContent } from "../components/layout/PageContent";
@@ -10,13 +10,18 @@ import {
   deleteSurvey,
   getAdminSurveys,
   getSurveyAnswers,
+  getSurveyComments,
   type SurveyTransition,
   updateSurvey,
 } from "../services/adminService";
-import type { AdminSurvey, SurveyAnswer, SurveyType } from "../types/domain";
+import type {
+  AdminSurvey,
+  SurveyAnswer,
+  SurveyComment,
+  SurveyType,
+} from "../types/domain";
 
 type SurveysPageProps = { token: string };
-type SurveyFilter = "ALL" | "DRAFT" | "PUBLISHED" | "CLOSED";
 type SurveyForm = {
   title: string;
   question: string;
@@ -45,26 +50,18 @@ function statusTranslation(status: AdminSurvey["status"]) {
       : "closed";
 }
 
-function filterTranslation(filter: SurveyFilter) {
-  return filter === "ALL"
-    ? "allStatuses"
-    : filter === "DRAFT"
-      ? "draft"
-      : filter === "PUBLISHED"
-        ? "published"
-        : "closed";
-}
-
 export function SurveysPage({ token }: SurveysPageProps) {
   const { t } = useLanguage();
   const [surveys, setSurveys] = useState<AdminSurvey[]>([]);
   const [answers, setAnswers] = useState<SurveyAnswer[]>([]);
+  const [comments, setComments] = useState<SurveyComment[]>([]);
   const [answersLoading, setAnswersLoading] = useState(false);
   const [answersError, setAnswersError] = useState("");
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [commentsError, setCommentsError] = useState("");
   const [selectedSurvey, setSelectedSurvey] = useState<AdminSurvey | null>(
     null,
   );
-  const [surveyFilter, setSurveyFilter] = useState<SurveyFilter>("ALL");
   const [form, setForm] = useState<SurveyForm>(emptyForm);
   const [editingSurvey, setEditingSurvey] = useState<AdminSurvey | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -77,14 +74,6 @@ export function SurveysPage({ token }: SurveysPageProps) {
   );
 
   useAutoDismiss(message, setMessage);
-
-  const visibleSurveys = useMemo(
-    () =>
-      surveyFilter === "ALL"
-        ? surveys
-        : surveys.filter((survey) => survey.status === surveyFilter),
-    [surveyFilter, surveys],
-  );
 
   const loadSurveys = useCallback(async () => {
     setLoading(true);
@@ -186,7 +175,9 @@ export function SurveysPage({ token }: SurveysPageProps) {
         if (selectedSurvey?.id === action.survey.id) {
           setSelectedSurvey(null);
           setAnswers([]);
+          setComments([]);
           setAnswersError("");
+          setCommentsError("");
         }
       } else {
         await changeSurveyStatus(token, action.survey.id, action.type);
@@ -205,15 +196,29 @@ export function SurveysPage({ token }: SurveysPageProps) {
   async function showAnswers(survey: AdminSurvey) {
     setSelectedSurvey(survey);
     setAnswers([]);
+    setComments([]);
     setAnswersError("");
+    setCommentsError("");
     setAnswersLoading(true);
-    try {
-      setAnswers(await getSurveyAnswers(token, survey.id));
-    } catch {
+    setCommentsLoading(true);
+
+    const [answersResult, commentsResult] = await Promise.allSettled([
+      getSurveyAnswers(token, survey.id),
+      getSurveyComments(token, survey.id),
+    ]);
+
+    if (answersResult.status === "fulfilled") {
+      setAnswers(answersResult.value);
+    } else {
       setAnswersError(t("answersFailed"));
-    } finally {
-      setAnswersLoading(false);
     }
+    if (commentsResult.status === "fulfilled") {
+      setComments(commentsResult.value);
+    } else {
+      setCommentsError(t("commentsFailed"));
+    }
+    setAnswersLoading(false);
+    setCommentsLoading(false);
   }
 
   return (
@@ -345,43 +350,13 @@ export function SurveysPage({ token }: SurveysPageProps) {
         </div>
       )}
 
-      <div
-        className="survey-filter-row"
-        role="tablist"
-        aria-label={t("filterSurveys")}
-      >
-        {(["ALL", "DRAFT", "PUBLISHED", "CLOSED"] as SurveyFilter[]).map(
-          (filter) => {
-            const count =
-              filter === "ALL"
-                ? surveys.length
-                : surveys.filter((survey) => survey.status === filter).length;
-            return (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={surveyFilter === filter}
-                className={`survey-filter ${surveyFilter === filter ? "active" : ""}`}
-                key={filter}
-                onClick={() => setSurveyFilter(filter)}
-              >
-                <span>{t(filterTranslation(filter))}</span>
-                <strong>{count}</strong>
-              </button>
-            );
-          },
-        )}
-      </div>
-
       <div className="panel table-panel">
         <div className="table-toolbar">
           <div className="table-toolbar-info">
             <strong>
-              {visibleSurveys.length} {t("surveys")}
+              {surveys.length} {t("surveys")}
             </strong>
-            <span>
-              {t(filterTranslation(surveyFilter))} · {t("sortedByCreation")}
-            </span>
+            <span>{t("sortedByCreation")}</span>
           </div>
         </div>
         <div className="table-wrap">
@@ -402,14 +377,14 @@ export function SurveysPage({ token }: SurveysPageProps) {
                     {t("signingIn")}
                   </td>
                 </tr>
-              ) : visibleSurveys.length === 0 ? (
+              ) : surveys.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="empty-state">
-                    {t("noSurveysInStatus")}
+                    {t("noSurveys")}
                   </td>
                 </tr>
               ) : (
-                visibleSurveys.map((survey) => (
+                surveys.map((survey) => (
                   <tr key={survey.id}>
                     <td data-label={t("surveyTitle")}>
                       <strong>{survey.title}</strong>
@@ -441,7 +416,7 @@ export function SurveysPage({ token }: SurveysPageProps) {
                         <button
                           type="button"
                           className="table-action table-action-view"
-                          disabled={saving || answersLoading}
+                          disabled={saving || answersLoading || commentsLoading}
                           onClick={() => void showAnswers(survey)}
                         >
                           {t("viewAnswers")}
@@ -507,44 +482,27 @@ export function SurveysPage({ token }: SurveysPageProps) {
               onClick={() => {
                 setSelectedSurvey(null);
                 setAnswers([]);
+                setComments([]);
                 setAnswersError("");
+                setCommentsError("");
               }}
               aria-label={t("closeAnswers")}
             >
               {t("closeAnswers")}
             </button>
           </div>
-          {answersLoading ? (
-            <div className="answer-loading" role="status" aria-live="polite">
-              <span className="loading-spinner" aria-hidden="true" />
-              {t("answersLoading")}
-            </div>
-          ) : answersError ? (
-            <div className="answer-error" role="alert">
-              <span>{answersError}</span>
-              <button
-                type="button"
-                className="outline-button"
-                onClick={() => void showAnswers(selectedSurvey)}
-              >
-                {t("retry")}
-              </button>
-            </div>
-          ) : answers.length === 0 ? (
-            <p className="muted">{t("noAnswers")}</p>
-          ) : (
-            <div className="answer-list">
-              {answers.map((answer) => (
-                <article className="answer-item" key={answer.id}>
-                  <div>
-                    <strong>{answer.displayName || t("anonymous")}</strong>
-                    <span className="table-secondary">{answer.email}</span>
-                  </div>
-                  <p>{answer.answerText}</p>
-                </article>
-              ))}
-            </div>
-          )}
+          <SurveyAnswerList
+            answers={answers}
+            error={answersError}
+            loading={answersLoading}
+            onRetry={() => void showAnswers(selectedSurvey)}
+          />
+          <SurveyCommentList
+            comments={comments}
+            error={commentsError}
+            loading={commentsLoading}
+            onRetry={() => void showAnswers(selectedSurvey)}
+          />
         </div>
       )}
       {pendingAction && (
@@ -581,5 +539,159 @@ export function SurveysPage({ token }: SurveysPageProps) {
         />
       )}
     </PageContent>
+  );
+}
+
+function SurveyAnswerList({
+  answers,
+  error,
+  loading,
+  onRetry,
+}: {
+  answers: SurveyAnswer[];
+  error: string;
+  loading: boolean;
+  onRetry: () => void;
+}) {
+  const { t } = useLanguage();
+
+  return (
+    <section className="answer-section" aria-labelledby="survey-answer-list">
+      <div className="answer-section-heading">
+        <div>
+          <span className="eyebrow">{t("surveyAnswers")}</span>
+          <strong id="survey-answer-list">
+            {answers.length} {t("answerCount").toLowerCase()}
+          </strong>
+        </div>
+      </div>
+      {loading ? (
+        <div className="answer-loading" role="status" aria-live="polite">
+          <span className="loading-spinner" aria-hidden="true" />
+          {t("answersLoading")}
+        </div>
+      ) : error ? (
+        <div className="answer-error" role="alert">
+          <span>{error}</span>
+          <button type="button" className="outline-button" onClick={onRetry}>
+            {t("retry")}
+          </button>
+        </div>
+      ) : answers.length === 0 ? (
+        <p className="muted">{t("noAnswers")}</p>
+      ) : (
+        <div className="answer-list">
+          {answers.map((answer) => (
+            <article className="answer-item" key={answer.id}>
+              <div>
+                <strong>{answer.displayName || t("anonymous")}</strong>
+                <span className="table-secondary">{answer.email}</span>
+              </div>
+              <p>{answer.answerText}</p>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function SurveyCommentList({
+  comments,
+  error,
+  loading,
+  onRetry,
+}: {
+  comments: SurveyComment[];
+  error: string;
+  loading: boolean;
+  onRetry: () => void;
+}) {
+  const { t } = useLanguage();
+
+  return (
+    <section
+      className="answer-section survey-comments-section"
+      aria-labelledby="survey-comment-list"
+    >
+      <div className="answer-section-heading">
+        <div>
+          <span className="eyebrow">{t("surveyComments")}</span>
+          <strong id="survey-comment-list">
+            {comments.length} {t("commentsCount")}
+          </strong>
+        </div>
+        <span className="answer-section-note">{t("anonymousOnly")}</span>
+      </div>
+      {loading ? (
+        <div className="answer-loading" role="status" aria-live="polite">
+          <span className="loading-spinner" aria-hidden="true" />
+          {t("commentsLoading")}
+        </div>
+      ) : error ? (
+        <div className="answer-error" role="alert">
+          <span>{error}</span>
+          <button type="button" className="outline-button" onClick={onRetry}>
+            {t("retry")}
+          </button>
+        </div>
+      ) : comments.length === 0 ? (
+        <p className="muted">{t("noComments")}</p>
+      ) : (
+        <div className="survey-comment-list">
+          {comments.map((comment) => (
+            <SurveyCommentItem key={comment.id} comment={comment} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function SurveyCommentItem({
+  comment,
+  depth = 0,
+}: {
+  comment: SurveyComment;
+  depth?: number;
+}) {
+  const { t } = useLanguage();
+
+  return (
+    <article
+      className={
+        depth > 0
+          ? "survey-comment-item survey-comment-reply"
+          : "survey-comment-item"
+      }
+    >
+      <div className="survey-comment-content">
+        <span className="survey-comment-label">
+          {depth > 0 ? t("anonymousReply") : t("anonymousComment")}
+        </span>
+        <p>{comment.content}</p>
+      </div>
+      <div className="survey-comment-meta">
+        <span>
+          {comment.likes} {t("likes")}
+        </span>
+        {comment.replies.length > 0 && (
+          <span>
+            {comment.replies.length} {t("replies")}
+          </span>
+        )}
+      </div>
+      {comment.replies.length > 0 && (
+        <div className="survey-comment-replies">
+          {comment.replies.map((reply) => (
+            <SurveyCommentItem
+              key={reply.id}
+              comment={reply}
+              depth={depth + 1}
+            />
+          ))}
+        </div>
+      )}
+    </article>
   );
 }

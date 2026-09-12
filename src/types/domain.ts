@@ -52,6 +52,14 @@ export type SurveyAnswer = {
   createdAt: string;
 };
 
+export type SurveyComment = {
+  id: number;
+  content: string;
+  likes: number;
+  createdAt: string;
+  replies: SurveyComment[];
+};
+
 export type ActivityStatus = "OPEN" | "CLOSED";
 
 export type ActivityOption = {

@@ -9,6 +9,7 @@ import type {
   ReportStatus,
   Role,
   SurveyAnswer,
+  SurveyComment,
   User,
 } from "../types/domain";
 import { API_URL, parseApiResponse } from "./api";
@@ -168,6 +169,24 @@ function mapSurveyAnswer(answer: ApiSurveyAnswer): SurveyAnswer {
   };
 }
 
+type ApiSurveyComment = {
+  id: number;
+  content: string;
+  likes: number;
+  created_at: string;
+  replies?: ApiSurveyComment[];
+};
+
+function mapSurveyComment(comment: ApiSurveyComment): SurveyComment {
+  return {
+    id: comment.id,
+    content: comment.content,
+    likes: comment.likes,
+    createdAt: comment.created_at,
+    replies: comment.replies?.map(mapSurveyComment) ?? [],
+  };
+}
+
 export type SurveyInput = {
   title: string;
   question: string;
@@ -260,6 +279,17 @@ export async function getSurveyAnswers(
   );
   const data = await parseApiResponse<ApiSurveyAnswer[]>(response);
   return data.map(mapSurveyAnswer);
+}
+
+export async function getSurveyComments(
+  token: string,
+  id: number,
+): Promise<SurveyComment[]> {
+  const response = await fetch(`${API_URL}/api/v1/surveys/${id}/comments`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await parseApiResponse<ApiSurveyComment[]>(response);
+  return data.map(mapSurveyComment);
 }
 
 type ApiActivityOption = Omit<
