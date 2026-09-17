@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import { PasswordField } from "../components/PasswordField";
 import { useLanguage } from "../i18n/useLanguage";
 import { login } from "../services/authService";
 import { isSystemAdmin } from "../services/adminService";
@@ -71,16 +72,14 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               autoComplete="username"
             />
           </label>
-          <label>
-            {t("password")}
-            <input
-              required
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              autoComplete="current-password"
-            />
-          </label>
+          <PasswordField
+            id="admin-login-password"
+            label={t("password")}
+            required
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            autoComplete="current-password"
+          />
           {error && (
             <div className="form-error" role="alert">
               {error}

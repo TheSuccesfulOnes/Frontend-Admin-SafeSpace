@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { PageContent } from "../components/layout/PageContent";
+import { PasswordField } from "../components/PasswordField";
 import { useAutoDismiss } from "../hooks/useAutoDismiss";
 import { useLanguage } from "../i18n/useLanguage";
 import {
@@ -333,20 +334,19 @@ export function UserManagementPage({
                     />
                   </label>
                   {showCreate && (
-                    <label>
-                      {t("temporaryPassword")}
-                      <input
-                        required
-                        type="password"
-                        minLength={8}
-                        value={form.password}
-                        onChange={(event) =>
-                          updateForm("password", event.target.value)
-                        }
-                        placeholder={t("passwordPlaceholder")}
-                        autoComplete="new-password"
-                      />
-                    </label>
+                    <PasswordField
+                      id="admin-create-password"
+                      label={t("temporaryPassword")}
+                      fullWidth
+                      required
+                      minLength={8}
+                      value={form.password}
+                      onChange={(event) =>
+                        updateForm("password", event.target.value)
+                      }
+                      placeholder={t("passwordPlaceholder")}
+                      autoComplete="new-password"
+                    />
                   )}
                   {editingUser && (
                     <label>
@@ -403,32 +403,28 @@ export function UserManagementPage({
                 </div>
                 <p className="muted">{passwordUser.displayName}</p>
                 <form onSubmit={submitPassword} className="admin-form">
-                  <label>
-                    {t("newPassword")}
-                    <input
-                      required
-                      type="password"
-                      minLength={8}
-                      value={newPassword}
-                      onChange={(event) => setNewPassword(event.target.value)}
-                      placeholder={t("passwordPlaceholder")}
-                      autoComplete="new-password"
-                    />
-                  </label>
-                  <label>
-                    {t("confirmPassword")}
-                    <input
-                      required
-                      type="password"
-                      minLength={8}
-                      value={confirmNewPassword}
-                      onChange={(event) =>
-                        setConfirmNewPassword(event.target.value)
-                      }
-                      placeholder={t("passwordPlaceholder")}
-                      autoComplete="new-password"
-                    />
-                  </label>
+                  <PasswordField
+                    id="admin-reset-new-password"
+                    label={t("newPassword")}
+                    required
+                    minLength={8}
+                    value={newPassword}
+                    onChange={(event) => setNewPassword(event.target.value)}
+                    placeholder={t("passwordPlaceholder")}
+                    autoComplete="new-password"
+                  />
+                  <PasswordField
+                    id="admin-reset-confirm-password"
+                    label={t("confirmPassword")}
+                    required
+                    minLength={8}
+                    value={confirmNewPassword}
+                    onChange={(event) =>
+                      setConfirmNewPassword(event.target.value)
+                    }
+                    placeholder={t("passwordPlaceholder")}
+                    autoComplete="new-password"
+                  />
                   {message && <div className="success-message">{message}</div>}
                   {error && <div className="form-error">{error}</div>}
                   <button
