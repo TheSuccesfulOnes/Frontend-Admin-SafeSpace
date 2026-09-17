@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import "./App.css";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+const API_URL = (
+  import.meta.env.VITE_API_URL || "https://safespace-backend-q3uv.onrender.com"
+).replace(/\/+$/, "");
 type Role = "EMPLOYEE" | "HR_MEMBER" | "SYSTEM_ADMIN";
 type User = {
   id: number;
