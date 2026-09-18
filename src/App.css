@@ -750,7 +750,6 @@ td {
 .file-picker-button {
   display: inline-flex;
   align-items: center;
-  width: fit-content;
   min-height: 42px;
   cursor: pointer;
   padding: 0 13px;
@@ -764,19 +763,42 @@ td {
   color: #5e6c65;
 }
 .payment-file-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 9px;
-  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+.payment-file-actions .file-picker-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-width: 0;
+  flex-direction: row;
+  gap: 0;
+  color: #48695a;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
 }
 .file-remove-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 42px;
   padding: 0 13px;
-  border: 1px solid #e4bbb2;
-  background: #fbe9e4;
-  color: #a1574b;
+  border: 1px solid #c9d0c8;
+  background: #fff;
+  color: #65766e;
+  cursor: pointer;
+  font-family: inherit;
   font-size: 11px;
   font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 .file-remove-button:hover,
 .file-remove-button:focus-visible {
@@ -784,7 +806,7 @@ td {
   background: #f9ded7;
   color: #8f4c3e;
 }
-.payment-file-field:hover .file-picker-button,
+.payment-file-actions .file-picker-button:hover,
 .payment-file-field:focus-within .file-picker-button {
   border-color: #75968a;
   background: #e5eee9;
@@ -1845,5 +1867,12 @@ td {
   }
   .payment-plan-summary {
     padding: 24px 18px;
+  }
+  .payment-file-actions {
+    grid-template-columns: 1fr;
+  }
+  .payment-file-actions .file-picker-button,
+  .payment-file-actions .file-remove-button {
+    width: 100%;
   }
 }
