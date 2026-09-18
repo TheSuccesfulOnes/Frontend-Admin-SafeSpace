@@ -252,6 +252,8 @@ export const translations = {
     paymentVoucher: "PDF voucher",
     paymentVoucherHelp: "PDF only. Maximum size: 10 MB.",
     chooseVoucher: "Choose PDF voucher",
+    changeVoucher: "Change voucher",
+    removeVoucher: "Remove voucher",
     paymentFormIncomplete:
       "Select an employee, a plan and a valid PDF voucher.",
     paymentVoucherInvalid: "Choose a PDF voucher up to 10 MB.",
@@ -265,6 +267,7 @@ export const translations = {
     paymentUpload: "Upload payment",
     paymentUploading: "Uploading…",
     selectedVoucher: "Selected voucher",
+    dismissNotification: "Dismiss notification",
     paymentSecurityDescription:
       "The voucher is sent only through the authenticated API and is never made publicly downloadable.",
     loginFailed: "Unable to sign in. Check your credentials and try again.",
@@ -539,6 +542,8 @@ export const translations = {
     paymentVoucher: "Voucher PDF",
     paymentVoucherHelp: "Solo PDF. Tamaño máximo: 10 MB.",
     chooseVoucher: "Elegir voucher PDF",
+    changeVoucher: "Cambiar voucher",
+    removeVoucher: "Eliminar voucher",
     paymentFormIncomplete:
       "Selecciona un empleado, un plan y un voucher PDF válido.",
     paymentVoucherInvalid: "Elige un voucher PDF de hasta 10 MB.",
@@ -552,6 +557,7 @@ export const translations = {
     paymentUpload: "Subir pago",
     paymentUploading: "Subiendo…",
     selectedVoucher: "Voucher seleccionado",
+    dismissNotification: "Cerrar notificación",
     paymentSecurityDescription:
       "El voucher solo se envía por la API autenticada y no queda disponible para descarga pública.",
     loginFailed:

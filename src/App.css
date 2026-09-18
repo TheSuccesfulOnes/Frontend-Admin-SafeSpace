@@ -622,6 +622,7 @@ td {
 }
 .stacked-form > label,
 .stacked-form > fieldset,
+.stacked-form > .payment-file-field,
 .stacked-form > .form-error,
 .stacked-form > .primary-button {
   grid-column: 1 / -1;
@@ -730,6 +731,11 @@ td {
 }
 .payment-file-field {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #5e6c65;
+  font-size: 11px;
 }
 .payment-file-field input[type="file"] {
   position: absolute;
@@ -744,13 +750,39 @@ td {
 .file-picker-button {
   display: inline-flex;
   align-items: center;
+  width: fit-content;
   min-height: 42px;
+  cursor: pointer;
   padding: 0 13px;
   border: 1px solid #b9c9bf;
   background: #f0f5f1;
   color: #48695a;
   font-size: 12px;
   font-weight: 700;
+}
+.payment-field-label {
+  color: #5e6c65;
+}
+.payment-file-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.file-remove-button {
+  min-height: 42px;
+  padding: 0 13px;
+  border: 1px solid #e4bbb2;
+  background: #fbe9e4;
+  color: #a1574b;
+  font-size: 11px;
+  font-weight: 700;
+}
+.file-remove-button:hover,
+.file-remove-button:focus-visible {
+  border-color: #a86458;
+  background: #f9ded7;
+  color: #8f4c3e;
 }
 .payment-file-field:hover .file-picker-button,
 .payment-file-field:focus-within .file-picker-button {
@@ -763,6 +795,13 @@ td {
   line-height: 1.5;
 }
 .payment-success {
+  position: relative;
+  padding-right: 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.payment-success-copy {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -770,6 +809,28 @@ td {
 .payment-success span {
   color: #5d7860;
   font-size: 11px;
+}
+.payment-success-close {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #b8d0b5;
+  background: transparent;
+  color: #507b52;
+  font-size: 21px;
+  line-height: 1;
+}
+.payment-success-close:hover,
+.payment-success-close:focus-visible {
+  border-color: #507b52;
+  background: #d7ead4;
+  outline: 2px solid #9fc49d;
+  outline-offset: 2px;
 }
 .payment-plan-summary {
   padding: 29px;

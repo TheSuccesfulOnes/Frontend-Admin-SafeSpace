@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { ConfirmationDialog } from "../components/ConfirmationDialog";
 import { PageContent } from "../components/layout/PageContent";
-import { useAutoDismiss } from "../hooks/useAutoDismiss";
 import { useLanguage } from "../i18n/useLanguage";
 import type { TranslationKey } from "../i18n/translations";
 import { getPaymentPlans, recordPayment } from "../services/adminService";
@@ -57,8 +56,7 @@ export function PaymentsPage({ token }: PaymentsPageProps) {
   const [pendingPayment, setPendingPayment] = useState<PendingPayment | null>(
     null,
   );
-
-  useAutoDismiss(message, setMessage);
+  const voucherInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -82,22 +80,29 @@ export function PaymentsPage({ token }: PaymentsPageProps) {
   }, [t, token]);
 
   function clearFeedback() {
-    setMessage("");
-    setNextPaymentDate("");
     setError("");
   }
 
-  function handleVoucherChange(file: File | null) {
+  function dismissSuccess() {
+    setMessage("");
+    setNextPaymentDate("");
+  }
+
+  function clearVoucher() {
     clearFeedback();
-    if (!file) {
-      setVoucher(null);
-      return;
-    }
+    setVoucher(null);
+    if (voucherInputRef.current) voucherInputRef.current.value = "";
+  }
+
+  function handleVoucherChange(file: File | undefined) {
+    clearFeedback();
+    // Keep the current voucher when the file picker is cancelled.
+    if (!file) return;
     const isPdf =
       file.type === "application/pdf" ||
       file.name.toLowerCase().endsWith(".pdf");
     if (!isPdf || file.size > MAX_VOUCHER_BYTES) {
-      setVoucher(null);
+      clearVoucher();
       setError(t("paymentVoucherInvalid"));
       return;
     }
@@ -133,10 +138,7 @@ export function PaymentsPage({ token }: PaymentsPageProps) {
       setBeneficiaryName("");
       setSelectedPlan("");
       setVoucher(null);
-      const input = document.getElementById(
-        "payment-voucher",
-      ) as HTMLInputElement | null;
-      if (input) input.value = "";
+      if (voucherInputRef.current) voucherInputRef.current.value = "";
       setPendingPayment(null);
     } catch (errorValue) {
       setPendingPayment(null);
@@ -169,12 +171,23 @@ export function PaymentsPage({ token }: PaymentsPageProps) {
           className="success-message page-message payment-success"
           role="status"
         >
-          <strong>{message}</strong>
-          {formattedNextPayment && (
-            <span>
-              {t("nextPayment")}: {formattedNextPayment}
-            </span>
-          )}
+          <div className="payment-success-copy">
+            <strong>{message}</strong>
+            {formattedNextPayment && (
+              <span>
+                {t("nextPayment")}: {formattedNextPayment}
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            className="payment-success-close"
+            aria-label={t("dismissNotification")}
+            title={t("dismissNotification")}
+            onClick={dismissSuccess}
+          >
+            ×
+          </button>
         </div>
       )}
       {error && (
@@ -225,24 +238,37 @@ export function PaymentsPage({ token }: PaymentsPageProps) {
               </select>
             </label>
 
-            <label htmlFor="payment-voucher" className="payment-file-field">
-              {t("paymentVoucher")}
+            <div className="payment-file-field">
+              <span className="payment-field-label">{t("paymentVoucher")}</span>
               <input
                 id="payment-voucher"
+                ref={voucherInputRef}
                 type="file"
                 accept="application/pdf,.pdf"
                 onChange={(event) =>
-                  handleVoucherChange(event.target.files?.[0] ?? null)
+                  handleVoucherChange(event.target.files?.[0])
                 }
-                required
               />
-              <span className="file-picker-button">{t("chooseVoucher")}</span>
+              <div className="payment-file-actions">
+                <label htmlFor="payment-voucher" className="file-picker-button">
+                  {voucher ? t("changeVoucher") : t("chooseVoucher")}
+                </label>
+                {voucher && (
+                  <button
+                    type="button"
+                    className="file-remove-button"
+                    onClick={clearVoucher}
+                  >
+                    {t("removeVoucher")}
+                  </button>
+                )}
+              </div>
               <span className="payment-file-help">
                 {voucher
                   ? `${t("selectedVoucher")}: ${voucher.name}`
                   : t("paymentVoucherHelp")}
               </span>
-            </label>
+            </div>
 
             <button type="submit" className="primary-button" disabled={saving}>
               {saving ? t("paymentUploading") : t("paymentUpload")}
