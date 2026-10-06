@@ -1,0 +1,1444 @@
+{
+  "command": "npm test",
+  "fullRun": true,
+  "integrationScope": "local jsdom component -> real service -> real response parser -> fake fetch; no live backend/E2E",
+  "runner": "Vitest",
+  "scannedSourceCount": 29,
+  "ownerCount": 12,
+  "passed": 288,
+  "failed": 0,
+  "skipped": 0,
+  "actualCaseCount": 288,
+  "sources": [
+    {
+      "source": "src/app/App.tsx",
+      "actualCaseCount": 22,
+      "unit": 0,
+      "integration": 22,
+      "suites": [
+        {
+          "path": "tests/App.test.tsx",
+          "type": "integration",
+          "actualCaseCount": 22,
+          "cases": [
+            {
+              "name": "missing session performs no protected fetch",
+              "status": "passed"
+            },
+            {
+              "name": "stored EMPLOYEE role cannot enter console",
+              "status": "passed"
+            },
+            {
+              "name": "stored HR_MEMBER role cannot enter console",
+              "status": "passed"
+            },
+            {
+              "name": "stored system_admin role cannot enter console",
+              "status": "passed"
+            },
+            {
+              "name": "stored ADMIN role cannot enter console",
+              "status": "passed"
+            },
+            {
+              "name": "invalid stored shape null is removed without protected fetch",
+              "status": "passed"
+            },
+            {
+              "name": "invalid stored shape {\"token\":null,\"username\":\"admin\",\"displayName\":\"Test Admin\",\"role\":\"SYSTEM_ADMIN\"} is removed without protected fetch",
+              "status": "passed"
+            },
+            {
+              "name": "invalid stored shape {\"token\":\"test-session-token\",\"username\":1,\"displayName\":\"Test Admin\",\"role\":\"SYSTEM_ADMIN\"} is removed without protected fetch",
+              "status": "passed"
+            },
+            {
+              "name": "invalid stored shape {\"token\":\"test-session-token\",\"username\":\"admin\",\"displayName\":null,\"role\":\"SYSTEM_ADMIN\"} is removed without protected fetch",
+              "status": "passed"
+            },
+            {
+              "name": "valid restored session hydrates protected users",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 401 revokes session and returns login",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 403 revokes session and returns login",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 400 retains session and exposes retry",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 404 retains session and exposes retry",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 429 retains session and exposes retry",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 500 retains session and exposes retry",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 503 retains session and exposes retry",
+              "status": "passed"
+            },
+            {
+              "name": "logout clears session and returns login",
+              "status": "passed"
+            },
+            {
+              "name": "login persists only after authenticated SYSTEM_ADMIN result",
+              "status": "passed"
+            },
+            {
+              "name": "retry recovers connection without changing session",
+              "status": "passed"
+            },
+            {
+              "name": "retry unauthorized response clears earlier session",
+              "status": "passed"
+            },
+            {
+              "name": "logout resets page before subsequent login",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "src/components/ConfirmationDialog.tsx",
+      "actualCaseCount": 25,
+      "unit": 23,
+      "integration": 2,
+      "suites": [
+        {
+          "path": "tests/ConfirmationDialog.test.tsx",
+          "type": "unit",
+          "actualCaseCount": 23,
+          "cases": [
+            {
+              "name": "create requires explicit confirmation and allows cancellation while idle",
+              "status": "passed"
+            },
+            {
+              "name": "delete requires explicit confirmation and allows cancellation while idle",
+              "status": "passed"
+            },
+            {
+              "name": "disable requires explicit confirmation and allows cancellation while idle",
+              "status": "passed"
+            },
+            {
+              "name": "enable requires explicit confirmation and allows cancellation while idle",
+              "status": "passed"
+            },
+            {
+              "name": "edit requires explicit confirmation and allows cancellation while idle",
+              "status": "passed"
+            },
+            {
+              "name": "password requires explicit confirmation and allows cancellation while idle",
+              "status": "passed"
+            },
+            {
+              "name": "publish requires explicit confirmation and allows cancellation while idle",
+              "status": "passed"
+            },
+            {
+              "name": "close requires explicit confirmation and allows cancellation while idle",
+              "status": "passed"
+            },
+            {
+              "name": "reopen requires explicit confirmation and allows cancellation while idle",
+              "status": "passed"
+            },
+            {
+              "name": "status requires explicit confirmation and allows cancellation while idle",
+              "status": "passed"
+            },
+            {
+              "name": "create busy blocks clicks and Escape",
+              "status": "passed"
+            },
+            {
+              "name": "delete busy blocks clicks and Escape",
+              "status": "passed"
+            },
+            {
+              "name": "disable busy blocks clicks and Escape",
+              "status": "passed"
+            },
+            {
+              "name": "enable busy blocks clicks and Escape",
+              "status": "passed"
+            },
+            {
+              "name": "edit busy blocks clicks and Escape",
+              "status": "passed"
+            },
+            {
+              "name": "password busy blocks clicks and Escape",
+              "status": "passed"
+            },
+            {
+              "name": "publish busy blocks clicks and Escape",
+              "status": "passed"
+            },
+            {
+              "name": "close busy blocks clicks and Escape",
+              "status": "passed"
+            },
+            {
+              "name": "reopen busy blocks clicks and Escape",
+              "status": "passed"
+            },
+            {
+              "name": "status busy blocks clicks and Escape",
+              "status": "passed"
+            },
+            {
+              "name": "Escape cancels idle dialog",
+              "status": "passed"
+            },
+            {
+              "name": "other keys never authorize mutation",
+              "status": "passed"
+            },
+            {
+              "name": "unmount removes Escape listener",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "path": "tests/ConfirmationDialog.test.tsx",
+          "type": "integration",
+          "actualCaseCount": 2,
+          "cases": [
+            {
+              "name": "component deletion remains unsent when confirmation is cancelled",
+              "status": "passed"
+            },
+            {
+              "name": "explicit consent passes deletion through actual service and parser",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "src/pages/ActivitiesPage.tsx",
+      "actualCaseCount": 20,
+      "unit": 0,
+      "integration": 20,
+      "suites": [
+        {
+          "path": "tests/ActivitiesPage.test.tsx",
+          "type": "integration",
+          "actualCaseCount": 20,
+          "cases": [
+            {
+              "name": "blocks empty option set",
+              "status": "passed"
+            },
+            {
+              "name": "blocks one option option set",
+              "status": "passed"
+            },
+            {
+              "name": "blocks spaces option set",
+              "status": "passed"
+            },
+            {
+              "name": "blocks one trimmed option set",
+              "status": "passed"
+            },
+            {
+              "name": "trims both options before confirmed create",
+              "status": "passed"
+            },
+            {
+              "name": "three valid options are retained",
+              "status": "passed"
+            },
+            {
+              "name": "blank additional option is filtered at submit",
+              "status": "passed"
+            },
+            {
+              "name": "two minimum options cannot be removed",
+              "status": "passed"
+            },
+            {
+              "name": "removing an extra option preserves order",
+              "status": "passed"
+            },
+            {
+              "name": "required empty title is browser-invalid",
+              "status": "passed"
+            },
+            {
+              "name": "title, description and option input boundaries are declared",
+              "status": "passed"
+            },
+            {
+              "name": "cancel create preserves input without network mutation",
+              "status": "passed"
+            },
+            {
+              "name": "confirmed edit uses PUT and existing id",
+              "status": "passed"
+            },
+            {
+              "name": "cancel edit leaves server untouched",
+              "status": "passed"
+            },
+            {
+              "name": "OPEN lifecycle confirms close",
+              "status": "passed"
+            },
+            {
+              "name": "CLOSED lifecycle confirms reopen",
+              "status": "passed"
+            },
+            {
+              "name": "delete requires confirmation",
+              "status": "passed"
+            },
+            {
+              "name": "cancel delete prevents deletion",
+              "status": "passed"
+            },
+            {
+              "name": "failed mutation keeps create inputs for retry",
+              "status": "passed"
+            },
+            {
+              "name": "successful mutation refreshes the protected list",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "src/pages/LoginPage.tsx",
+      "actualCaseCount": 20,
+      "unit": 0,
+      "integration": 20,
+      "suites": [
+        {
+          "path": "tests/LoginPage.test.tsx",
+          "type": "integration",
+          "actualCaseCount": 20,
+          "cases": [
+            {
+              "name": "rejects API role \"EMPLOYEE\"",
+              "status": "passed"
+            },
+            {
+              "name": "rejects API role \"HR_MEMBER\"",
+              "status": "passed"
+            },
+            {
+              "name": "rejects API role \"system_admin\"",
+              "status": "passed"
+            },
+            {
+              "name": "rejects API role \"ADMIN\"",
+              "status": "passed"
+            },
+            {
+              "name": "rejects API role \"\"",
+              "status": "passed"
+            },
+            {
+              "name": "rejects API role null",
+              "status": "passed"
+            },
+            {
+              "name": "rejects API role 1",
+              "status": "passed"
+            },
+            {
+              "name": "rejects API role undefined",
+              "status": "passed"
+            },
+            {
+              "name": "SYSTEM_ADMIN succeeds and maps display name",
+              "status": "passed"
+            },
+            {
+              "name": "trims identifier but preserves password exactly",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 401 blocks login and hides server diagnostic",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 403 blocks login and hides server diagnostic",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 429 blocks login and hides server diagnostic",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 500 blocks login and hides server diagnostic",
+              "status": "passed"
+            },
+            {
+              "name": "malformed JSON blocks login",
+              "status": "passed"
+            },
+            {
+              "name": "network rejection blocks login",
+              "status": "passed"
+            },
+            {
+              "name": "empty username is browser-invalid",
+              "status": "passed"
+            },
+            {
+              "name": "empty password is browser-invalid",
+              "status": "passed"
+            },
+            {
+              "name": "pending request disables submitting until completion",
+              "status": "passed"
+            },
+            {
+              "name": "retry clears previous failure and accepts administrator",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "src/pages/OverviewPage.tsx",
+      "actualCaseCount": 20,
+      "unit": 0,
+      "integration": 20,
+      "suites": [
+        {
+          "path": "tests/OverviewPage.test.tsx",
+          "type": "integration",
+          "actualCaseCount": 20,
+          "cases": [
+            {
+              "name": "confirmed enable for EMPLOYEE",
+              "status": "passed"
+            },
+            {
+              "name": "confirmed enable for HR_MEMBER",
+              "status": "passed"
+            },
+            {
+              "name": "confirmed enable for SYSTEM_ADMIN",
+              "status": "passed"
+            },
+            {
+              "name": "enabled EMPLOYEE has no enable operation",
+              "status": "passed"
+            },
+            {
+              "name": "enabled HR_MEMBER has no enable operation",
+              "status": "passed"
+            },
+            {
+              "name": "enabled SYSTEM_ADMIN has no enable operation",
+              "status": "passed"
+            },
+            {
+              "name": "foreign owner EMPLOYEE is protected",
+              "status": "passed"
+            },
+            {
+              "name": "foreign owner HR_MEMBER is protected",
+              "status": "passed"
+            },
+            {
+              "name": "foreign owner SYSTEM_ADMIN is protected",
+              "status": "passed"
+            },
+            {
+              "name": "current owner can re-enable itself",
+              "status": "passed"
+            },
+            {
+              "name": "cancel prevents enable and refresh",
+              "status": "passed"
+            },
+            {
+              "name": "Escape cancels pending operation",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 401 preserves disabled account without refresh",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 403 preserves disabled account without refresh",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 409 preserves disabled account without refresh",
+              "status": "passed"
+            },
+            {
+              "name": "HTTP 500 preserves disabled account without refresh",
+              "status": "passed"
+            },
+            {
+              "name": "busy blocks duplicate operations across rows",
+              "status": "passed"
+            },
+            {
+              "name": "loading prevents actions on unhydrated account data",
+              "status": "passed"
+            },
+            {
+              "name": "empty account list has no enable target",
+              "status": "passed"
+            },
+            {
+              "name": "refresh failure reports failure and releases busy state",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "src/pages/PaymentsPage.tsx",
+      "actualCaseCount": 28,
+      "unit": 0,
+      "integration": 28,
+      "suites": [
+        {
+          "path": "tests/PaymentsPage.test.tsx",
+          "type": "integration",
+          "actualCaseCount": 28,
+          "cases": [
+            {
+              "name": "accepts lowercase extension",
+              "status": "passed"
+            },
+            {
+              "name": "accepts uppercase extension",
+              "status": "passed"
+            },
+            {
+              "name": "accepts missing MIME",
+              "status": "passed"
+            },
+            {
+              "name": "accepts generic MIME",
+              "status": "passed"
+            },
+            {
+              "name": "rejects text",
+              "status": "passed"
+            },
+            {
+              "name": "rejects double extension",
+              "status": "passed"
+            },
+            {
+              "name": "rejects oversized PDF",
+              "status": "passed"
+            },
+            {
+              "name": "rejects legacy 10 MiB limit",
+              "status": "passed"
+            },
+            {
+              "name": "rejects no extension",
+              "status": "passed"
+            },
+            {
+              "name": "rejects wrong MIME",
+              "status": "passed"
+            },
+            {
+              "name": "rejects empty PDF",
+              "status": "passed"
+            },
+            {
+              "name": "accepts exactly 700000 bytes",
+              "status": "passed"
+            },
+            {
+              "name": "cancelled picker retains previous voucher",
+              "status": "passed"
+            },
+            {
+              "name": "invalid replacement clears previous voucher",
+              "status": "passed"
+            },
+            {
+              "name": "remove clears both selected voucher and input",
+              "status": "passed"
+            },
+            {
+              "name": "blocks incomplete name",
+              "status": "passed"
+            },
+            {
+              "name": "blocks incomplete plan",
+              "status": "passed"
+            },
+            {
+              "name": "blocks incomplete voucher",
+              "status": "passed"
+            },
+            {
+              "name": "blocks incomplete whitespace name",
+              "status": "passed"
+            },
+            {
+              "name": "no plans disables selection",
+              "status": "passed"
+            },
+            {
+              "name": "trims beneficiary and sends authenticated multipart only after confirmation",
+              "status": "passed"
+            },
+            {
+              "name": "annual plan is sent unchanged",
+              "status": "passed"
+            },
+            {
+              "name": "cancel leaves complete inputs without recording",
+              "status": "passed"
+            },
+            {
+              "name": "success clears form and exposes next due date",
+              "status": "passed"
+            },
+            {
+              "name": "dismiss success removes date notification",
+              "status": "passed"
+            },
+            {
+              "name": "server rejection preserves inputs and reports safe message",
+              "status": "passed"
+            },
+            {
+              "name": "busy dialog blocks duplicate confirmation and cancellation",
+              "status": "passed"
+            },
+            {
+              "name": "plan load failure blocks unavailable plan and reports error",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "src/pages/ReportsPage.tsx",
+      "actualCaseCount": 20,
+      "unit": 0,
+      "integration": 20,
+      "suites": [
+        {
+          "path": "tests/ReportsPage.test.tsx",
+          "type": "integration",
+          "actualCaseCount": 20,
+          "cases": [
+            {
+              "name": "confirms supported transition NEW -> IN_REVIEW",
+              "status": "passed"
+            },
+            {
+              "name": "confirms supported transition NEW -> ADDRESSED",
+              "status": "passed"
+            },
+            {
+              "name": "confirms supported transition NEW -> CLOSED",
+              "status": "passed"
+            },
+            {
+              "name": "confirms supported transition IN_REVIEW -> NEW",
+              "status": "passed"
+            },
+            {
+              "name": "confirms supported transition IN_REVIEW -> ADDRESSED",
+              "status": "passed"
+            },
+            {
+              "name": "confirms supported transition IN_REVIEW -> CLOSED",
+              "status": "passed"
+            },
+            {
+              "name": "confirms supported transition ADDRESSED -> NEW",
+              "status": "passed"
+            },
+            {
+              "name": "confirms supported transition ADDRESSED -> IN_REVIEW",
+              "status": "passed"
+            },
+            {
+              "name": "confirms supported transition ADDRESSED -> CLOSED",
+              "status": "passed"
+            },
+            {
+              "name": "confirms supported transition CLOSED -> NEW",
+              "status": "passed"
+            },
+            {
+              "name": "confirms supported transition CLOSED -> IN_REVIEW",
+              "status": "passed"
+            },
+            {
+              "name": "confirms supported transition CLOSED -> ADDRESSED",
+              "status": "passed"
+            },
+            {
+              "name": "cancel preserves original status without request",
+              "status": "passed"
+            },
+            {
+              "name": "Escape cancels unsent change",
+              "status": "passed"
+            },
+            {
+              "name": "failure retains previous status and closes dialog",
+              "status": "passed"
+            },
+            {
+              "name": "updates only selected record",
+              "status": "passed"
+            },
+            {
+              "name": "retry after server rejection succeeds",
+              "status": "passed"
+            },
+            {
+              "name": "busy disables every status selector and cancellation",
+              "status": "passed"
+            },
+            {
+              "name": "list load failure can be refreshed locally",
+              "status": "passed"
+            },
+            {
+              "name": "empty list offers no mutation target",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "src/pages/SurveysPage.tsx",
+      "actualCaseCount": 20,
+      "unit": 0,
+      "integration": 20,
+      "suites": [
+        {
+          "path": "tests/SurveysPage.test.tsx",
+          "type": "integration",
+          "actualCaseCount": 20,
+          "cases": [
+            {
+              "name": "requires surveyTitle before browser submission",
+              "status": "passed"
+            },
+            {
+              "name": "requires question before browser submission",
+              "status": "passed"
+            },
+            {
+              "name": "title max boundary is 160",
+              "status": "passed"
+            },
+            {
+              "name": "question max boundary is 500",
+              "status": "passed"
+            },
+            {
+              "name": "creates DAILY survey only after confirmation",
+              "status": "passed"
+            },
+            {
+              "name": "creates WEEKLY survey only after confirmation",
+              "status": "passed"
+            },
+            {
+              "name": "comments opt-out is sent to API",
+              "status": "passed"
+            },
+            {
+              "name": "cancel create preserves draft without mutation",
+              "status": "passed"
+            },
+            {
+              "name": "edit hydrates existing values and uses PUT",
+              "status": "passed"
+            },
+            {
+              "name": "cancel edit prevents changes",
+              "status": "passed"
+            },
+            {
+              "name": "DRAFT selects the allowed publish transition",
+              "status": "passed"
+            },
+            {
+              "name": "PUBLISHED selects the allowed close transition",
+              "status": "passed"
+            },
+            {
+              "name": "CLOSED selects the allowed reopen transition",
+              "status": "passed"
+            },
+            {
+              "name": "draft cannot close or reopen",
+              "status": "passed"
+            },
+            {
+              "name": "cancel transition prevents publish",
+              "status": "passed"
+            },
+            {
+              "name": "confirmed delete sends DELETE",
+              "status": "passed"
+            },
+            {
+              "name": "delete clears selected answers pane",
+              "status": "passed"
+            },
+            {
+              "name": "comments failure provides retry and recovers",
+              "status": "passed"
+            },
+            {
+              "name": "mutation failure keeps input for retry",
+              "status": "passed"
+            },
+            {
+              "name": "cancel delete keeps answers pane",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "src/pages/UserManagementPage.tsx",
+      "actualCaseCount": 30,
+      "unit": 0,
+      "integration": 30,
+      "suites": [
+        {
+          "path": "tests/UserManagementPage.test.tsx",
+          "type": "integration",
+          "actualCaseCount": 30,
+          "cases": [
+            {
+              "name": "requires create displayName",
+              "status": "passed"
+            },
+            {
+              "name": "requires create username",
+              "status": "passed"
+            },
+            {
+              "name": "requires create email",
+              "status": "passed"
+            },
+            {
+              "name": "requires create temporaryPassword",
+              "status": "passed"
+            },
+            {
+              "name": "invalid email fails browser validation",
+              "status": "passed"
+            },
+            {
+              "name": "create binds EMPLOYEE role to confirmed request",
+              "status": "passed"
+            },
+            {
+              "name": "create binds HR_MEMBER role to confirmed request",
+              "status": "passed"
+            },
+            {
+              "name": "create binds SYSTEM_ADMIN role to confirmed request",
+              "status": "passed"
+            },
+            {
+              "name": "cancel create keeps draft",
+              "status": "passed"
+            },
+            {
+              "name": "edit sends selected role without password",
+              "status": "passed"
+            },
+            {
+              "name": "rejects short reset password \"\"",
+              "status": "passed"
+            },
+            {
+              "name": "rejects short reset password \"1234567\"",
+              "status": "passed"
+            },
+            {
+              "name": "rejects reset password mismatch",
+              "status": "passed"
+            },
+            {
+              "name": "accepts exactly eight characters after confirmation",
+              "status": "passed"
+            },
+            {
+              "name": "cancel reset does not change password",
+              "status": "passed"
+            },
+            {
+              "name": "enabled=true chooses opposite status",
+              "status": "passed"
+            },
+            {
+              "name": "enabled=false chooses opposite status",
+              "status": "passed"
+            },
+            {
+              "name": "deletion occurs after confirmation",
+              "status": "passed"
+            },
+            {
+              "name": "cancel deletion keeps account untouched",
+              "status": "passed"
+            },
+            {
+              "name": "protects another system owner from edit",
+              "status": "passed"
+            },
+            {
+              "name": "protects another system owner from resetPassword",
+              "status": "passed"
+            },
+            {
+              "name": "protects another system owner from disableAccount",
+              "status": "passed"
+            },
+            {
+              "name": "protects another system owner from deleteAccount",
+              "status": "passed"
+            },
+            {
+              "name": "current account cannot disable or delete itself",
+              "status": "passed"
+            },
+            {
+              "name": "owner may edit its own account",
+              "status": "passed"
+            },
+            {
+              "name": "maps server create failure Username is already in use safely",
+              "status": "passed"
+            },
+            {
+              "name": "maps server create failure Email is already in use safely",
+              "status": "passed"
+            },
+            {
+              "name": "maps server create failure Internal diagnostic safely",
+              "status": "passed"
+            },
+            {
+              "name": "role filtering prevents cross-role mutation",
+              "status": "passed"
+            },
+            {
+              "name": "search normalizes whitespace and case within selected role",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "src/services/adminService.ts",
+      "actualCaseCount": 28,
+      "unit": 6,
+      "integration": 22,
+      "suites": [
+        {
+          "path": "tests/adminService.test.ts",
+          "type": "unit",
+          "actualCaseCount": 6,
+          "cases": [
+            {
+              "name": "administrator guard SYSTEM_ADMIN -> true",
+              "status": "passed"
+            },
+            {
+              "name": "administrator guard EMPLOYEE -> false",
+              "status": "passed"
+            },
+            {
+              "name": "administrator guard HR_MEMBER -> false",
+              "status": "passed"
+            },
+            {
+              "name": "administrator guard system_admin -> false",
+              "status": "passed"
+            },
+            {
+              "name": "administrator guard  -> false",
+              "status": "passed"
+            },
+            {
+              "name": "administrator guard ADMIN -> false",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "path": "tests/adminService.test.ts",
+          "type": "integration",
+          "actualCaseCount": 22,
+          "cases": [
+            {
+              "name": "create user snake case contract",
+              "status": "passed"
+            },
+            {
+              "name": "update only supplied fields",
+              "status": "passed"
+            },
+            {
+              "name": "update explicit blank display name is n…",
+              "status": "passed"
+            },
+            {
+              "name": "enable account",
+              "status": "passed"
+            },
+            {
+              "name": "disable account",
+              "status": "passed"
+            },
+            {
+              "name": "reset password contract",
+              "status": "passed"
+            },
+            {
+              "name": "delete user",
+              "status": "passed"
+            },
+            {
+              "name": "create survey comment flag",
+              "status": "passed"
+            },
+            {
+              "name": "update survey",
+              "status": "passed"
+            },
+            {
+              "name": "survey publish",
+              "status": "passed"
+            },
+            {
+              "name": "survey close",
+              "status": "passed"
+            },
+            {
+              "name": "survey reopen",
+              "status": "passed"
+            },
+            {
+              "name": "delete survey",
+              "status": "passed"
+            },
+            {
+              "name": "create activity options",
+              "status": "passed"
+            },
+            {
+              "name": "update activity",
+              "status": "passed"
+            },
+            {
+              "name": "activity OPEN",
+              "status": "passed"
+            },
+            {
+              "name": "activity CLOSED",
+              "status": "passed"
+            },
+            {
+              "name": "delete activity",
+              "status": "passed"
+            },
+            {
+              "name": "report status contract",
+              "status": "passed"
+            },
+            {
+              "name": "recursive comments preserve replies and default absent replies to empty",
+              "status": "passed"
+            },
+            {
+              "name": "multipart payment leaves content type for browser boundary",
+              "status": "passed"
+            },
+            {
+              "name": "forbidden response never returns a mapped administrator",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "src/services/api.ts",
+      "actualCaseCount": 27,
+      "unit": 25,
+      "integration": 2,
+      "suites": [
+        {
+          "path": "tests/api.test.ts",
+          "type": "unit",
+          "actualCaseCount": 25,
+          "cases": [
+            {
+              "name": "message and code",
+              "status": "passed"
+            },
+            {
+              "name": "message only",
+              "status": "passed"
+            },
+            {
+              "name": "code only",
+              "status": "passed"
+            },
+            {
+              "name": "empty object",
+              "status": "passed"
+            },
+            {
+              "name": "null payload",
+              "status": "passed"
+            },
+            {
+              "name": "numeric message",
+              "status": "passed"
+            },
+            {
+              "name": "boolean message",
+              "status": "passed"
+            },
+            {
+              "name": "array message",
+              "status": "passed"
+            },
+            {
+              "name": "object message",
+              "status": "passed"
+            },
+            {
+              "name": "null message",
+              "status": "passed"
+            },
+            {
+              "name": "numeric code",
+              "status": "passed"
+            },
+            {
+              "name": "boolean code",
+              "status": "passed"
+            },
+            {
+              "name": "object code",
+              "status": "passed"
+            },
+            {
+              "name": "array payload",
+              "status": "passed"
+            },
+            {
+              "name": "string payload",
+              "status": "passed"
+            },
+            {
+              "name": "empty message permitted",
+              "status": "passed"
+            },
+            {
+              "name": "preserves HTTP status 400",
+              "status": "passed"
+            },
+            {
+              "name": "preserves HTTP status 401",
+              "status": "passed"
+            },
+            {
+              "name": "preserves HTTP status 404",
+              "status": "passed"
+            },
+            {
+              "name": "preserves HTTP status 409",
+              "status": "passed"
+            },
+            {
+              "name": "preserves HTTP status 422",
+              "status": "passed"
+            },
+            {
+              "name": "preserves HTTP status 500",
+              "status": "passed"
+            },
+            {
+              "name": "malformed error JSON uses safe fallback",
+              "status": "passed"
+            },
+            {
+              "name": "204 without JSON resolves null",
+              "status": "passed"
+            },
+            {
+              "name": "successful JSON preserves data rather than interpreting message as error",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "path": "tests/api.test.ts",
+          "type": "integration",
+          "actualCaseCount": 2,
+          "cases": [
+            {
+              "name": "auth transport preserves safe error type and code from parser",
+              "status": "passed"
+            },
+            {
+              "name": "protected list parser rejects malformed provider error payload",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "src/services/sessionStorage.ts",
+      "actualCaseCount": 28,
+      "unit": 26,
+      "integration": 2,
+      "suites": [
+        {
+          "path": "tests/session-flows.test.tsx",
+          "type": "integration",
+          "actualCaseCount": 2,
+          "cases": [
+            {
+              "name": "local login persists a readable admin session and logout clears it",
+              "status": "passed"
+            },
+            {
+              "name": "restored session is revoked when protected API returns forbidden",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "path": "tests/sessionStorage.test.ts",
+          "type": "unit",
+          "actualCaseCount": 26,
+          "cases": [
+            {
+              "name": "missing session is anonymous",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes null",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes number",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes string",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes boolean",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes array",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes missing token",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes numeric token",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes missing username",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes null username",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes missing display name",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes object display name",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes missing role",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes numeric role",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes employee",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes HR",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes lowercase role",
+              "status": "passed"
+            },
+            {
+              "name": "rejects and removes unknown role",
+              "status": "passed"
+            },
+            {
+              "name": "malformed JSON is removed",
+              "status": "passed"
+            },
+            {
+              "name": "valid administrator is restored",
+              "status": "passed"
+            },
+            {
+              "name": "extra fields do not remove a valid session",
+              "status": "passed"
+            },
+            {
+              "name": "saving replaces previous session",
+              "status": "passed"
+            },
+            {
+              "name": "logout removes only administrator session",
+              "status": "passed"
+            },
+            {
+              "name": "logout is idempotent",
+              "status": "passed"
+            },
+            {
+              "name": "storage read failure returns anonymous",
+              "status": "passed"
+            },
+            {
+              "name": "storage read and removal failure still returns anonymous",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "exclusions": [
+    {
+      "source": "src/App.tsx",
+      "reason": "Legacy unreachable prototype; main imports src/app/App.tsx and no active source imports this file"
+    },
+    {
+      "source": "src/main.tsx",
+      "reason": "Bootstrap only"
+    },
+    {
+      "source": "src/config/env.ts",
+      "reason": "Build-time API URL default/trailing slash configuration; no security or business admission validator"
+    },
+    {
+      "source": "src/services/authService.ts",
+      "reason": "Transport and display_name mapping only; role cast is not validation; exercised by LoginPage/App integration"
+    },
+    {
+      "source": "src/i18n/LanguageProvider.tsx",
+      "reason": "Presentation language preference fallback, not business/input/security validation"
+    },
+    {
+      "source": "src/i18n/useLanguage.ts",
+      "reason": "Provider-presence configuration guard"
+    },
+    {
+      "source": "src/i18n/languageContext.ts",
+      "reason": "Context definition only"
+    },
+    {
+      "source": "src/i18n/translations.ts",
+      "reason": "Label constants; payment messages corrected but no validator"
+    },
+    {
+      "source": "src/components/PasswordField.tsx",
+      "reason": "Forwards owning-page native validation props; visibility toggle, no independent password rule"
+    },
+    {
+      "source": "src/components/LanguageSwitcher.tsx",
+      "reason": "Presentation locale event forwarding"
+    },
+    {
+      "source": "src/components/Metric.tsx",
+      "reason": "Rendering only"
+    },
+    {
+      "source": "src/components/layout/Sidebar.tsx",
+      "reason": "Avatar initials fallback/counters/navigation rendering; no permission enforcement"
+    },
+    {
+      "source": "src/components/layout/Topbar.tsx",
+      "reason": "Status/title rendering and navigation event forwarding"
+    },
+    {
+      "source": "src/components/layout/PageContent.tsx",
+      "reason": "Layout wrapper and class-name filtering"
+    },
+    {
+      "source": "src/components/layout/PageFooter.tsx",
+      "reason": "Copyright/date rendering only"
+    },
+    {
+      "source": "src/hooks/useAutoDismiss.ts",
+      "reason": "Presentation feedback timer with effect cleanup, not business validation"
+    },
+    {
+      "source": "src/types/domain.ts",
+      "reason": "Compile-time types, no runtime validation"
+    }
+  ]
+}

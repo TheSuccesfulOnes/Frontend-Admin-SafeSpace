@@ -1,0 +1,117 @@
+{
+  "minimumExecutedCasesPerOwner": 20,
+  "owners": [
+    {
+      "source": "src/pages/ActivitiesPage.tsx",
+      "validation": "Trimmed nonblank options >=2; native title/options limits; explicit confirmation and saving guards for CRUD/open/close"
+    },
+    {
+      "source": "src/pages/SurveysPage.tsx",
+      "validation": "Native title/question limits; DAILY/WEEKLY and comments flag; status-specific publish/close/reopen; consent, busy guards, selected-answer cleanup"
+    },
+    {
+      "source": "src/pages/UserManagementPage.tsx",
+      "validation": "Required identity/email/password; reset password >=8 and matching; role binding; owner/self-account protection; duplicate identity error mapping; consent and saving guards"
+    },
+    {
+      "source": "src/pages/PaymentsPage.tsx",
+      "validation": "Nonempty .pdf; compatible optional MIME; <=700000 bytes; trimmed beneficiary/plan/voucher completeness; consent and busy guards"
+    },
+    {
+      "source": "src/pages/LoginPage.tsx",
+      "validation": "Required identifier/password; trimmed identifier; SYSTEM_ADMIN-only admission; request busy/error guards"
+    },
+    {
+      "source": "src/pages/ReportsPage.tsx",
+      "validation": "Explicit consent for supported report status transitions; busy/error/cancellation guards and target-only update"
+    },
+    {
+      "source": "src/pages/OverviewPage.tsx",
+      "validation": "Enable only disabled accounts; foreign-owner protection; consent/busy/error/refresh lifecycle"
+    },
+    {
+      "source": "src/app/App.tsx",
+      "validation": "Stored admin-session gate; protected user hydration; 401/403 revocation; login persistence/logout/route reset"
+    },
+    {
+      "source": "src/components/ConfirmationDialog.tsx",
+      "validation": "Explicit consent and cancellation for all action types; busy blocks confirm/cancel/Escape; listener cleanup"
+    },
+    {
+      "source": "src/services/sessionStorage.ts",
+      "validation": "Session shape and role checks; corrupted-session cleanup; fail-closed read; persistence and logout"
+    },
+    {
+      "source": "src/services/api.ts",
+      "validation": "HTTP error detection; message/code type checks; safe fallback; status preservation; malformed JSON handling"
+    },
+    {
+      "source": "src/services/adminService.ts",
+      "validation": "SYSTEM_ADMIN predicate; secured endpoint/method/header/payload contracts; sparse update mapping; nested replies and multipart payload"
+    }
+  ],
+  "exclusions": [
+    {
+      "source": "src/App.tsx",
+      "reason": "Legacy unreachable prototype; main imports src/app/App.tsx and no active source imports this file"
+    },
+    { "source": "src/main.tsx", "reason": "Bootstrap only" },
+    {
+      "source": "src/config/env.ts",
+      "reason": "Build-time API URL default/trailing slash configuration; no security or business admission validator"
+    },
+    {
+      "source": "src/services/authService.ts",
+      "reason": "Transport and display_name mapping only; role cast is not validation; exercised by LoginPage/App integration"
+    },
+    {
+      "source": "src/i18n/LanguageProvider.tsx",
+      "reason": "Presentation language preference fallback, not business/input/security validation"
+    },
+    {
+      "source": "src/i18n/useLanguage.ts",
+      "reason": "Provider-presence configuration guard"
+    },
+    {
+      "source": "src/i18n/languageContext.ts",
+      "reason": "Context definition only"
+    },
+    {
+      "source": "src/i18n/translations.ts",
+      "reason": "Label constants; payment messages corrected but no validator"
+    },
+    {
+      "source": "src/components/PasswordField.tsx",
+      "reason": "Forwards owning-page native validation props; visibility toggle, no independent password rule"
+    },
+    {
+      "source": "src/components/LanguageSwitcher.tsx",
+      "reason": "Presentation locale event forwarding"
+    },
+    { "source": "src/components/Metric.tsx", "reason": "Rendering only" },
+    {
+      "source": "src/components/layout/Sidebar.tsx",
+      "reason": "Avatar initials fallback/counters/navigation rendering; no permission enforcement"
+    },
+    {
+      "source": "src/components/layout/Topbar.tsx",
+      "reason": "Status/title rendering and navigation event forwarding"
+    },
+    {
+      "source": "src/components/layout/PageContent.tsx",
+      "reason": "Layout wrapper and class-name filtering"
+    },
+    {
+      "source": "src/components/layout/PageFooter.tsx",
+      "reason": "Copyright/date rendering only"
+    },
+    {
+      "source": "src/hooks/useAutoDismiss.ts",
+      "reason": "Presentation feedback timer with effect cleanup, not business validation"
+    },
+    {
+      "source": "src/types/domain.ts",
+      "reason": "Compile-time types, no runtime validation"
+    }
+  ]
+}
