@@ -29,7 +29,13 @@ export function readAdminSession(): AuthResponse | null {
 
     return parsedSession;
   } catch {
-    window.sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    // Storage may be unavailable entirely (for example, browser privacy mode).
+    // A failed cleanup must still fail closed to an anonymous session.
+    try {
+      window.sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    } catch {
+      // Nothing can be persisted or removed while storage is unavailable.
+    }
     return null;
   }
 }
