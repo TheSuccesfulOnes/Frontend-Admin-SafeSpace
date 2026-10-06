@@ -1,6 +1,7 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { expect, vi } from "vitest";
 import { API_URL } from "../src/services/api";
+import { recordUnexpectedRequest } from "./networkGuard";
 
 export const token = "test-session-token";
 export const auth = {
@@ -127,6 +128,7 @@ export function backend(
               : { POST: "^/admin/payments$" };
     const rule = allowed[method as keyof typeof allowed] as string | undefined;
     if (rule && new RegExp(rule).test(path)) return response(mutation);
+    recordUnexpectedRequest(`${method} ${url}`);
     throw new Error("Unexpected mocked endpoint");
   });
   vi.stubGlobal("fetch", fetcher);
