@@ -17,7 +17,8 @@ type PendingPayment = {
   voucher: File;
 };
 
-const MAX_VOUCHER_BYTES = 10 * 1024 * 1024;
+// Match PaymentService's safe Firestore document limit (including metadata).
+const MAX_VOUCHER_BYTES = 700_000;
 
 function planName(
   plan: PaymentPlanCode,
@@ -99,9 +100,9 @@ export function PaymentsPage({ token }: PaymentsPageProps) {
     // Keep the current voucher when the file picker is cancelled.
     if (!file) return;
     const isPdf =
-      file.type === "application/pdf" ||
-      file.name.toLowerCase().endsWith(".pdf");
-    if (!isPdf || file.size > MAX_VOUCHER_BYTES) {
+      file.name.toLowerCase().endsWith(".pdf") &&
+      ["application/pdf", "application/octet-stream", ""].includes(file.type);
+    if (!isPdf || file.size === 0 || file.size > MAX_VOUCHER_BYTES) {
       clearVoucher();
       setError(t("paymentVoucherInvalid"));
       return;

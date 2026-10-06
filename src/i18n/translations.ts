@@ -250,13 +250,15 @@ export const translations = {
     annualPlan: "Annual plan",
     annualPlanDescription: "Renews access for twelve months.",
     paymentVoucher: "PDF voucher",
-    paymentVoucherHelp: "PDF only. Maximum size: 10 MB.",
+    paymentVoucherHelp:
+      "Non-empty PDF only. Maximum size: 700 KB (700,000 bytes).",
     chooseVoucher: "Choose PDF voucher",
     changeVoucher: "Change voucher",
     removeVoucher: "Remove voucher",
     paymentFormIncomplete:
       "Select an employee, a plan and a valid PDF voucher.",
-    paymentVoucherInvalid: "Choose a PDF voucher up to 10 MB.",
+    paymentVoucherInvalid:
+      "Choose a non-empty .pdf voucher up to 700 KB (700,000 bytes).",
     confirmPaymentTitle: "Register this payment?",
     confirmPaymentAction:
       "The voucher will be stored as a payment record for the selected employee.",
@@ -540,13 +542,15 @@ export const translations = {
     annualPlan: "Plan anual",
     annualPlanDescription: "Renueva el acceso durante doce meses.",
     paymentVoucher: "Voucher PDF",
-    paymentVoucherHelp: "Solo PDF. Tamaño máximo: 10 MB.",
+    paymentVoucherHelp:
+      "Solo PDF no vacío. Tamaño máximo: 700 KB (700 000 bytes).",
     chooseVoucher: "Elegir voucher PDF",
     changeVoucher: "Cambiar voucher",
     removeVoucher: "Eliminar voucher",
     paymentFormIncomplete:
       "Selecciona un empleado, un plan y un voucher PDF válido.",
-    paymentVoucherInvalid: "Elige un voucher PDF de hasta 10 MB.",
+    paymentVoucherInvalid:
+      "Elige un voucher .pdf no vacío de hasta 700 KB (700 000 bytes).",
     confirmPaymentTitle: "¿Registrar este pago?",
     confirmPaymentAction:
       "El voucher se guardará como registro de pago del empleado seleccionado.",
