@@ -5,10 +5,10 @@
   "runner": "Vitest",
   "scannedSourceCount": 29,
   "ownerCount": 12,
-  "passed": 288,
+  "passed": 291,
   "failed": 0,
   "skipped": 0,
-  "actualCaseCount": 288,
+  "actualCaseCount": 291,
   "sources": [
     {
       "source": "src/app/App.tsx",
@@ -332,15 +332,27 @@
     },
     {
       "source": "src/pages/LoginPage.tsx",
-      "actualCaseCount": 20,
+      "actualCaseCount": 23,
       "unit": 0,
-      "integration": 20,
+      "integration": 23,
       "suites": [
         {
           "path": "tests/LoginPage.test.tsx",
           "type": "integration",
-          "actualCaseCount": 20,
+          "actualCaseCount": 23,
           "cases": [
+            {
+              "name": "stable login selectors submit identifier admin without depending on labels",
+              "status": "passed"
+            },
+            {
+              "name": "stable login selectors submit identifier admin@example.test without depending on labels",
+              "status": "passed"
+            },
+            {
+              "name": "login selectors stay stable through password visibility, loading and failure",
+              "status": "passed"
+            },
             {
               "name": "rejects API role \"EMPLOYEE\"",
               "status": "passed"

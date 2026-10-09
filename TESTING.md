@@ -1,5 +1,23 @@
 # Administrative frontend validation tests
 
+## Login automation selectors
+
+Use stable IDs instead of translated labels, CSS layout classes or absolute XPath:
+
+| Element | Selenium IDE target |
+| --- | --- |
+| Username or email | `id=admin-login-identifier` |
+| Password | `id=admin-login-password` |
+| Submit | `id=admin-login-submit` |
+| Form | `id=admin-login-form` |
+| Login failure | `id=admin-login-error` |
+
+Both fields also expose stable `name=identifier` / `name=password`. Wait for the identifier to become visible, type the credentials, then click submit. Wait for the form to disappear on success or the error to become visible on failure. Login is a React transition: use element waits instead of waiting for a full page reload. The form exposes `aria-busy` while the request is pending and the submit button is disabled. Existing recordings must be updated to these targets; adding an ID does not change an old recorded XPath automatically.
+
+Component regression tests verify selector uniqueness, label association, exact request credentials and selector stability during password visibility changes, loading and failures.
+
+A headless Chrome Selenium smoke run against the production build passed username and email cases using these IDs. It verified password visibility, request payloads, pending state and error recovery with intercepted API responses. This browser check did not authenticate against the deployed backend.
+
 Run from this repository with Node 24 and npm 11 (the versions used for verification):
 
 ```sh
@@ -16,14 +34,14 @@ npm audit --omit=dev
 
 <!-- executed-inventory -->
 
-Last full run: 288 executed cases; 288 passed, 0 failed, 0 skipped.
+Last full run: 291 executed cases; 291 passed, 0 failed, 0 skipped.
 
 | Source | Suites | Unit | Local integration | Executed |
 | --- | --- | ---: | ---: | ---: |
 | `src/app/App.tsx` | `tests/App.test.tsx` | 0 | 22 | 22 |
 | `src/components/ConfirmationDialog.tsx` | `tests/ConfirmationDialog.test.tsx` | 23 | 2 | 25 |
 | `src/pages/ActivitiesPage.tsx` | `tests/ActivitiesPage.test.tsx` | 0 | 20 | 20 |
-| `src/pages/LoginPage.tsx` | `tests/LoginPage.test.tsx` | 0 | 20 | 20 |
+| `src/pages/LoginPage.tsx` | `tests/LoginPage.test.tsx` | 0 | 23 | 23 |
 | `src/pages/OverviewPage.tsx` | `tests/OverviewPage.test.tsx` | 0 | 20 | 20 |
 | `src/pages/PaymentsPage.tsx` | `tests/PaymentsPage.test.tsx` | 0 | 28 | 28 |
 | `src/pages/ReportsPage.tsx` | `tests/ReportsPage.test.tsx` | 0 | 20 | 20 |

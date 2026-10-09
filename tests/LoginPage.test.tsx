@@ -18,6 +18,70 @@ function fill(identifier = " admin ", password = " TestPass123 ") {
   change("password", password);
 }
 describe("[integration] src/pages/LoginPage.tsx", () => {
+  it.each(["admin", "admin@example.test"])(
+    "stable login selectors submit identifier %s without depending on labels",
+    async (identifier) => {
+      const { fetcher, onLogin } = mount();
+      const input = document.querySelector<HTMLInputElement>(
+        "#admin-login-identifier",
+      )!;
+      const password = document.querySelector<HTMLInputElement>(
+        "#admin-login-password",
+      )!;
+      const submitButton = document.querySelector<HTMLButtonElement>(
+        "#admin-login-submit",
+      )!;
+
+      expect(input).toBe(screen.getByLabelText("username"));
+      expect(password).toBe(screen.getByLabelText("password"));
+      expect(input).toHaveAttribute("name", "identifier");
+      expect(password).toHaveAttribute("name", "password");
+      expect(input.form?.id).toBe("admin-login-form");
+      expect(submitButton.form).toBe(input.form);
+      expect(document.querySelectorAll("#admin-login-identifier")).toHaveLength(
+        1,
+      );
+      fireEvent.change(input, { target: { value: ` ${identifier} ` } });
+      fireEvent.change(password, { target: { value: " TestPass123 " } });
+      fireEvent.click(submitButton);
+      await act(async () => {});
+
+      expect(onLogin).toHaveBeenCalledOnce();
+      expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({
+        identifier,
+        password: " TestPass123 ",
+      });
+    },
+  );
+  it("login selectors stay stable through password visibility, loading and failure", async () => {
+    const { fetcher } = mount();
+    const pending = deferred<Response>();
+    fetcher.mockReturnValueOnce(pending.promise);
+    fill();
+    const input = document.getElementById("admin-login-identifier")!;
+    const password = document.getElementById("admin-login-password")!;
+    const submitButton = document.getElementById("admin-login-submit")!;
+    fireEvent.click(screen.getByRole("button", { name: "showPassword" }));
+    expect(password).toHaveAttribute("type", "text");
+    fireEvent.click(submitButton);
+    expect(document.getElementById("admin-login-form")).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
+    expect(submitButton).toBeDisabled();
+    await act(async () =>
+      pending.resolve(response({ message: "Invalid credentials" }, 400)),
+    );
+    expect(screen.getByRole("alert").id).toBe("admin-login-error");
+    expect(document.getElementById("admin-login-identifier")).toBe(input);
+    expect(document.getElementById("admin-login-password")).toBe(password);
+    expect(document.getElementById("admin-login-submit")).toBe(submitButton);
+    expect(document.getElementById("admin-login-form")).toHaveAttribute(
+      "aria-busy",
+      "false",
+    );
+    expect(submitButton).toBeEnabled();
+  });
   it.each([
     "EMPLOYEE",
     "HR_MEMBER",

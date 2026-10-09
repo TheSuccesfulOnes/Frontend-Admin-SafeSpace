@@ -59,13 +59,21 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         <div className="login-language-switcher">
           <LanguageSwitcher />
         </div>
-        <form className="login-form" onSubmit={submit}>
+        <form
+          id="admin-login-form"
+          className="login-form"
+          onSubmit={submit}
+          aria-busy={loading}
+        >
           <span className="eyebrow">{t("welcomeBack")}</span>
           <h2>{t("signInTitle")}</h2>
           <p className="form-intro">{t("signInIntro")}</p>
-          <label>
+          <label htmlFor="admin-login-identifier">
             {t("username")}
             <input
+              id="admin-login-identifier"
+              name="identifier"
+              type="text"
               required
               value={identifier}
               onChange={(event) => setIdentifier(event.target.value)}
@@ -74,6 +82,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           </label>
           <PasswordField
             id="admin-login-password"
+            name="password"
             label={t("password")}
             required
             value={password}
@@ -81,11 +90,16 @@ export function LoginPage({ onLogin }: LoginPageProps) {
             autoComplete="current-password"
           />
           {error && (
-            <div className="form-error" role="alert">
+            <div id="admin-login-error" className="form-error" role="alert">
               {error}
             </div>
           )}
-          <button type="submit" className="primary-button" disabled={loading}>
+          <button
+            id="admin-login-submit"
+            type="submit"
+            className="primary-button"
+            disabled={loading}
+          >
             {loading ? t("signingIn") : t("enterConsole")}
             <span>→</span>
           </button>
